@@ -1,0 +1,20 @@
+{
+    "name": "admad/cakephp-sequence",
+    "description": "Sequence plugin for CakePHP 3.0+",
+    "type": "cakephp-plugin",
+    "require": {
+        "php": ">=5.4",
+        "cakephp/cakephp": "3.0.x-dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Sequence\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Sequence\\Test\\": "tests",
+            "Cake\\Test\\": "./vendor/cakephp/cakephp/tests"
+        }
+    }
+}

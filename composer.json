@@ -2,6 +2,7 @@
     "name": "admad/cakephp-sequence",
     "description": "Sequence plugin for CakePHP 3.0+",
     "type": "cakephp-plugin",
+    "license": "MIT",
     "require": {
         "php": ">=5.4",
         "cakephp/cakephp": "3.0.x-dev"

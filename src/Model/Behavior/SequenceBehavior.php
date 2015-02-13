@@ -236,12 +236,12 @@ class SequenceBehavior extends Behavior
     public function beforeDelete(Event $event, Entity $entity)
     {
         $orderField = $this->_config['order'];
-        list($oldOrder, $oldScope) = $this->_getOldValues($entity);
+        list($order, $scope) = $this->_getOldValues($entity);
 
         $this->_sync(
             [$orderField => $this->_table->query()->newExpr()->add("$orderField - 1")],
-            [$orderField . ' >' => $oldOrder],
-            $oldScope
+            [$orderField . ' >' => $order],
+            $scope
         );
     }
 
@@ -290,19 +290,32 @@ class SequenceBehavior extends Behavior
     protected function _getOldValues(Entity $entity)
     {
         $config = $this->config();
+        $fields = array_merge($config['scope'], [$config['order']]);
 
-        $oldRecord = $this->_table->get($entity->get(
-            $this->_table->primaryKey(),
-            [
-                'fields' => array_merge($config['scope'], [$config['order']]),
-                'limit' => 1
-            ]
-        ));
-        $oldRecord = $oldRecord->toArray();
+        $values = [];
+        foreach ($fields as $field) {
+            if ($entity->dirty($field)) {
+                $values[$field] = $entity->getOriginal($field);
+            } elseif ($entity->has($field)) {
+                $values[$field] = $entity->get($field);
+            }
+        }
 
-        $oldOrder = $oldRecord[$config['order']];
-        $oldScope = array_intersect_key($oldRecord, array_flip($config['scope']));
-        return [$oldOrder, $oldScope];
+        if (count($fields) != count($values)) {
+            $primaryKey = $entity->get($this->_table->primaryKey());
+            $values = $this->_table->get(
+                    $primaryKey,
+                    [
+                        'fields' => $fields,
+                        'limit' => 1
+                    ]
+                )
+                ->toArray();
+        }
+
+        $order = $values[$config['order']];
+        unset($values[$config['order']]);
+        return [$order, $values];
     }
 
     /**

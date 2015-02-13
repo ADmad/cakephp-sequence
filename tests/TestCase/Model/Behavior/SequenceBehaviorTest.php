@@ -125,6 +125,11 @@ class SequenceTest extends TestCase
         $Items->delete($entity);
         $this->assertOrder([1, 2, 4, 5], $Items);
 
+        $entity = new Entity(['id' => 4]);
+        $entity->isNew(false);
+        $Items->delete($entity);
+        $this->assertOrder([1, 2, 5], $Items);
+
         $GroupedItems = TableRegistry::get('GroupedItems', [
             'table' => 'grouped_items',
             'alias' => 'GroupedItems',

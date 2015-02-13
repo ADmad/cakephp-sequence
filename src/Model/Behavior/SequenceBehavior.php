@@ -343,7 +343,7 @@ class SequenceBehavior extends Behavior
      * @param array $scope Grouping scope that will be added to coditions.
      * @return int Count of rows updated.
      */
-    public function _sync($fields, $conditions, $scope = null)
+    protected function _sync($fields, $conditions, $scope = null)
     {
         if ($scope) {
             $conditions = array_merge($conditions, $scope);

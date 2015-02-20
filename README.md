@@ -1,4 +1,4 @@
-# Sequence plugin for CakePHP
+# Sequence plugin for CakePHP 3.0+ to maintain ordered list of records
 
 ## Installation
 

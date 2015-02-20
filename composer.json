@@ -1,6 +1,6 @@
 {
     "name": "admad/cakephp-sequence",
-    "description": "Sequence plugin for CakePHP 3.0+",
+    "description": "Sequence plugin for CakePHP 3.0+ to maintain ordered list of records",
     "type": "cakephp-plugin",
     "license": "MIT",
     "require": {

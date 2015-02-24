@@ -27,9 +27,20 @@ class GroupedItems extends Table
     }
 }
 
+class KeywordItems extends Table
+{
+    public function initialize(array $config)
+    {
+        $this->addBehavior('Sequence.Sequence', [
+            'order' => 'order',
+            'start' => 0,
+        ]);
+    }
+}
+
 class SequenceTest extends TestCase
 {
-    public $fixtures = ['plugin.Sequence.Items', 'plugin.Sequence.GroupedItems'];
+    public $fixtures = ['plugin.Sequence.Items', 'plugin.Sequence.GroupedItems', 'plugin.Sequence.KeywordItems'];
 
     /**
      * [testSave description]
@@ -108,6 +119,25 @@ class SequenceTest extends TestCase
         $this->assertOrder([1, 4, 3, 5], $GroupedItems, ['group_field' => 1]);
         $this->assertOrder([6, 2, 7, 8, 17, 9, 10, 16], $GroupedItems, ['group_field' => 2]);
         $this->assertOrder([11, 12, 13, 14, 15], $GroupedItems, ['group_field' => 3]);
+    }
+
+    /**
+     * [testSaveKeyword description]
+     *
+     * @return void
+     */
+    public function testSaveKeyword()
+    {
+        $KeywordItems = TableRegistry::get('KeywordItems', [
+            'table' => 'keyword_items',
+            'alias' => 'KeywordItems',
+            'className' => 'Sequence\Test\TestCase\Model\Behavior\KeywordItems'
+        ]);
+
+        // Testing saving a new record (order not specified) sets order to highest + 1
+        $entity = $KeywordItems->newEntity(['name' => 'Item F']);
+        $entity = $KeywordItems->save($entity);
+        $this->assertOrder([1, 2, 3, 4, 5, 6], $KeywordItems);
     }
 
     /**

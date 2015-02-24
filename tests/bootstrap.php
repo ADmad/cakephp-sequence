@@ -1,6 +1,7 @@
 <?php
 
 use Cake\Core\Plugin;
+use Cake\Datasource\ConnectionManager;
 
 /**
  * Test suite bootstrap for Sequence
@@ -30,3 +31,5 @@ if (file_exists($root . '/config/bootstrap.php')) {
 }
 
 require dirname(__DIR__) . '/vendor/cakephp/cakephp/tests/bootstrap.php';
+
+ConnectionManager::get('test')->driver()->autoQuoting(true);

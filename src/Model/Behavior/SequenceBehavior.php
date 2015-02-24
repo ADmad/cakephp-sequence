@@ -2,6 +2,7 @@
 namespace Sequence\Model\Behavior;
 
 use ArrayObject;
+use Cake\Database\Expression\IdentifierExpression;
 use Cake\Event\Event;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
@@ -147,7 +148,7 @@ class SequenceBehavior extends Behavior
             } else {
                 // Increment order of records it's inserted before
                 $this->_sync(
-                    [$orderField => $this->_table->query()->newExpr()->add("$orderField + 1")],
+                    [$orderField => $this->_getUpdateExpression('+')],
                     [$orderField . ' >=' => $newOrder],
                     $newScope
                 );
@@ -173,7 +174,7 @@ class SequenceBehavior extends Behavior
             if ($newScope && $newScope != $oldScope) {
                 // Decrement records in old scope with higher order than moved record old order
                 $this->_sync(
-                    [$orderField => $this->_table->query()->newExpr()->add("$orderField - 1")],
+                    [$orderField => $this->_getUpdateExpression('-')],
                     [$orderField . ' >' => $oldOrder],
                     $oldScope
                 );
@@ -190,7 +191,7 @@ class SequenceBehavior extends Behavior
                 } else {
                     // Increment records in new scope with higher order than moved record new order
                     $this->_sync(
-                        [$orderField => $this->_table->query()->newExpr()->add("$orderField + 1")],
+                        [$orderField => $this->_getUpdateExpression('+')],
                         [$orderField . ' >=' => $newOrder],
                         $newScope
                     );
@@ -201,7 +202,7 @@ class SequenceBehavior extends Behavior
                 if ($newOrder < $oldOrder) {
                     // Increment order of those in between
                     $this->_sync(
-                        [$orderField => $this->_table->query()->newExpr()->add("$orderField + 1")],
+                        [$orderField => $this->_getUpdateExpression('+')],
                         [
                             $orderField . ' >=' => $newOrder,
                             $orderField . ' <' => $oldOrder
@@ -213,7 +214,7 @@ class SequenceBehavior extends Behavior
                 } else {
                     // Decrement order of those in between
                     $this->_sync(
-                        [$orderField => $this->_table->query()->newExpr()->add("$orderField - 1")],
+                        [$orderField => $this->_getUpdateExpression('-')],
                         [
                             $orderField . ' >' => $oldOrder,
                             $orderField . ' <=' => $newOrder
@@ -239,7 +240,7 @@ class SequenceBehavior extends Behavior
         list($order, $scope) = $this->_getOldValues($entity);
 
         $this->_sync(
-            [$orderField => $this->_table->query()->newExpr()->add("$orderField - 1")],
+            [$orderField => $this->_getUpdateExpression('-')],
             [$orderField . ' >' => $order],
             $scope
         );
@@ -304,13 +305,13 @@ class SequenceBehavior extends Behavior
         if (count($fields) != count($values)) {
             $primaryKey = $entity->get($this->_table->primaryKey());
             $values = $this->_table->get(
-                    $primaryKey,
-                    [
-                        'fields' => $fields,
-                        'limit' => 1
-                    ]
-                )
-                ->toArray();
+                $primaryKey,
+                [
+                    'fields' => $fields,
+                    'limit' => 1
+                ]
+            )
+            ->toArray();
         }
 
         $order = $values[$config['order']];
@@ -362,5 +363,21 @@ class SequenceBehavior extends Behavior
             $conditions = array_merge($conditions, $scope);
         }
         return $this->_table->updateAll($fields, $conditions);
+    }
+
+    /**
+     * Returns the update expression for the order field.
+     *
+     * @param string $direction Whether to increment or decrement the field.
+     * @return Cake\Database\Expression\QueryExpression QueryExpression to modify the order field
+     */
+    protected function _getUpdateExpression($direction = '+')
+    {
+        $field = $this->_config['order'];
+
+        return $this->_table->query()->newExpr()
+            ->add(new IdentifierExpression($field))
+            ->add('1')
+            ->type($direction);
     }
 }

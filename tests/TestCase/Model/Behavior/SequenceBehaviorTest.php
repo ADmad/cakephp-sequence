@@ -200,7 +200,7 @@ class SequenceTest extends TestCase
 
         $query = $query ?: $table->find();
 
-        $records = $query->find('list', ['idField' => $order, 'valueField' => 'id'])
+        $records = $query->find('list', ['keyField' => $order, 'valueField' => 'id'])
             ->where($conditions)
             ->order([$order => 'ASC'])
             ->toArray();

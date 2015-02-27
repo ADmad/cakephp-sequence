@@ -10,10 +10,10 @@ The recommended way to install composer packages is:
 composer require admad/cakephp-sequence:dev-master
 ```
 
-## TODO
+## Todo
 
 - Improve this README :P
 
-## ACKNOWLEDGEMENT
+## Acknowledgement
 
 Shout out to @neilcrookes for his wonderful Sequence Behavior for CakePHP 1.3 which was the inpiration for this plugin.

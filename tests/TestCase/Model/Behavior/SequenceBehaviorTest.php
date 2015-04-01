@@ -184,13 +184,14 @@ class SequenceTest extends TestCase
             'className' => 'Sequence\Test\TestCase\Model\Behavior\Items'
         ]);
 
-        $Items->setOrder([
+        $result = $Items->setOrder([
             ['id' => 4],
             ['id' => 3],
             ['id' => 2],
             ['id' => 1],
             ['id' => 5],
         ]);
+        $this->assertTrue($result);
         $this->assertOrder([4, 3, 2, 1, 5], $Items);
 
         $GroupedItems = TableRegistry::get('GroupedItems', [
@@ -198,13 +199,14 @@ class SequenceTest extends TestCase
             'alias' => 'GroupedItems',
             'className' => 'Sequence\Test\TestCase\Model\Behavior\GroupedItems'
         ]);
-        $GroupedItems->setOrder([
+        $result = $GroupedItems->setOrder([
             ['id' => 4],
             ['id' => 3],
             ['id' => 2],
             ['id' => 1],
             ['id' => 5],
         ]);
+        $this->assertTrue($result);
         $this->assertOrder([4, 3, 2, 1, 5], $GroupedItems, ['group_field' => 1]);
         $this->assertOrder([6, 7, 8, 9, 10], $GroupedItems, ['group_field' => 2]);
     }

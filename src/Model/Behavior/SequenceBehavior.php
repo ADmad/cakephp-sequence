@@ -265,17 +265,17 @@ class SequenceBehavior extends Behavior
         $table->removeBehavior('Sequence');
 
         $return = $table->connection()->transactional(function ($connection) use ($table, $data) {
-            $return = true;
             $entities = $table->newEntities($data);
-            $return = true;
 
             foreach ($entities as $entity) {
                 $entity->isNew(false);
                 $r = $table->save($entity, ['atomic' => false, 'validate' => false]);
-                if ($r == false) {
+                if ($r === false) {
                     return false;
                 }
             }
+
+            return true;
         });
 
         $table->addBehavior('Sequence.Sequence', $config);

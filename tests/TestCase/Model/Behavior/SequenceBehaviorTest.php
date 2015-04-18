@@ -63,11 +63,17 @@ class SequenceTest extends TestCase
         $entity = $Items->save($entity);
         $this->assertOrder([1, 2, 3, 7, 4, 5, 6], $Items);
 
-        // Test editing record with new order
+        // Test editing record with new order - move up
         $entity = $Items->get(4);
         $entity->set('position', 1);
         $entity = $Items->save($entity);
         $this->assertOrder([1, 4, 2, 3, 7, 5, 6], $Items);
+
+        // Test editing record with new order - move down
+        $entity = $Items->get(2);
+        $entity->set('position', 6);
+        $entity = $Items->save($entity);
+        $this->assertOrder([1, 4, 3, 7, 5, 6, 2], $Items);
     }
 
     /**

@@ -210,7 +210,7 @@ class SequenceBehavior extends Behavior
                         $newScope
                     );
 
-                    // Moving down
+                // Moving down
                 } else {
                     // Decrement order of those in between
                     $this->_sync(

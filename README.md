@@ -21,4 +21,4 @@ composer require admad/cakephp-sequence:1.0.x-dev
 
 ## Acknowledgement
 
-Shout out to @neilcrookes for his wonderful Sequence Behavior for CakePHP 1.3 which was the inpiration for this plugin.
+Shout out to @neilcrookes for his wonderful Sequence Behavior for CakePHP 1.3 which was the inspiration for this plugin.

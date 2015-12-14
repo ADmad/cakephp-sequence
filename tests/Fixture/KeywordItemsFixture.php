@@ -5,9 +5,8 @@ use Cake\TestSuite\Fixture\TestFixture;
 
 class KeywordItemsFixture extends TestFixture
 {
-
     /**
-     * fields property
+     * fields property.
      *
      * @var array
      */
@@ -15,11 +14,11 @@ class KeywordItemsFixture extends TestFixture
         'id' => ['type' => 'integer'],
         'name' => ['type' => 'string', 'null' => true],
         'order' => ['type' => 'integer', 'null' => true],
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
+        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
     ];
 
     /**
-     * records property
+     * records property.
      *
      * @var array
      */
@@ -28,6 +27,6 @@ class KeywordItemsFixture extends TestFixture
         ['name' => 'Item B', 'order' => 1],
         ['name' => 'Item C', 'order' => 2],
         ['name' => 'Item D', 'order' => 3],
-        ['name' => 'Item E', 'order' => 4]
+        ['name' => 'Item E', 'order' => 4],
     ];
 }

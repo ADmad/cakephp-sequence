@@ -5,9 +5,8 @@ use Cake\TestSuite\Fixture\TestFixture;
 
 class GroupedItemsFixture extends TestFixture
 {
-
     /**
-     * fields property
+     * fields property.
      *
      * @var array
      */
@@ -16,11 +15,11 @@ class GroupedItemsFixture extends TestFixture
         'name' => ['type' => 'string', 'null' => true],
         'group_field' => ['type' => 'integer', 'null' => true],
         'position' => ['type' => 'integer', 'null' => true],
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
+        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
     ];
 
     /**
-     * records property
+     * records property.
      *
      * @var array
      */

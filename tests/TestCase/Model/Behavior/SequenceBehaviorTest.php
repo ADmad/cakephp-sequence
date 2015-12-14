@@ -5,8 +5,6 @@ use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Hash;
-use Sequence\Model\Behavior\SequenceBehavior;
 
 class Items extends Table
 {
@@ -22,7 +20,7 @@ class GroupedItems extends Table
     {
         $this->addBehavior('Sequence.Sequence', [
             'start' => 0,
-            'scope' => 'group_field'
+            'scope' => 'group_field',
         ]);
     }
 }
@@ -43,14 +41,14 @@ class SequenceTest extends TestCase
     public $fixtures = ['plugin.Sequence.Items', 'plugin.Sequence.GroupedItems', 'plugin.Sequence.KeywordItems'];
 
     /**
-     * [testSave description]
+     * [testSave description].
      *
      * @return void
      */
     public function testSave()
     {
         $Items = TableRegistry::get('Items', [
-            'className' => 'Sequence\Test\TestCase\Model\Behavior\Items'
+            'className' => 'Sequence\Test\TestCase\Model\Behavior\Items',
         ]);
 
         // Testing saving a new record (order not specified) sets order to highest + 1
@@ -77,7 +75,7 @@ class SequenceTest extends TestCase
     }
 
     /**
-     * [testSaveScoped description]
+     * [testSaveScoped description].
      *
      * @return void
      */
@@ -86,13 +84,13 @@ class SequenceTest extends TestCase
         $GroupedItems = TableRegistry::get('GroupedItems', [
             'table' => 'grouped_items',
             'alias' => 'GroupedItems',
-            'className' => 'Sequence\Test\TestCase\Model\Behavior\GroupedItems'
+            'className' => 'Sequence\Test\TestCase\Model\Behavior\GroupedItems',
         ]);
 
         // Testing saving a new record (order not specified) sets order to highest + 1
         $entity = $GroupedItems->newEntity([
             'name' => 'Item F',
-            'group_field' => 2
+            'group_field' => 2,
         ]);
         $entity = $GroupedItems->save($entity);
         $this->assertOrder([6, 7, 8, 9, 10, (int)$entity->id], $GroupedItems, ['group_field' => 2]);
@@ -103,7 +101,7 @@ class SequenceTest extends TestCase
         $entity = $GroupedItems->newEntity([
             'name' => 'Item G',
             'group_field' => 2,
-            'position' => 3
+            'position' => 3,
         ]);
         $entity = $GroupedItems->save($entity);
         $this->assertOrder([6, 7, 8, 17, 9, 10, 16], $GroupedItems, ['group_field' => 2]);
@@ -128,7 +126,7 @@ class SequenceTest extends TestCase
     }
 
     /**
-     * [testSaveKeyword description]
+     * [testSaveKeyword description].
      *
      * @return void
      */
@@ -137,7 +135,7 @@ class SequenceTest extends TestCase
         $KeywordItems = TableRegistry::get('KeywordItems', [
             'table' => 'keyword_items',
             'alias' => 'KeywordItems',
-            'className' => 'Sequence\Test\TestCase\Model\Behavior\KeywordItems'
+            'className' => 'Sequence\Test\TestCase\Model\Behavior\KeywordItems',
         ]);
 
         // Testing saving a new record (order not specified) sets order to highest + 1
@@ -147,14 +145,14 @@ class SequenceTest extends TestCase
     }
 
     /**
-     * [testDelete description]
+     * [testDelete description].
      *
      * @return void
      */
     public function testDelete()
     {
         $Items = TableRegistry::get('Items', [
-            'className' => 'Sequence\Test\TestCase\Model\Behavior\Items'
+            'className' => 'Sequence\Test\TestCase\Model\Behavior\Items',
         ]);
 
         $entity = $Items->get(3);
@@ -169,7 +167,7 @@ class SequenceTest extends TestCase
         $GroupedItems = TableRegistry::get('GroupedItems', [
             'table' => 'grouped_items',
             'alias' => 'GroupedItems',
-            'className' => 'Sequence\Test\TestCase\Model\Behavior\GroupedItems'
+            'className' => 'Sequence\Test\TestCase\Model\Behavior\GroupedItems',
         ]);
 
         $entity = $GroupedItems->get(3);
@@ -180,14 +178,14 @@ class SequenceTest extends TestCase
     }
 
     /**
-     * [testSetOrder description]
+     * [testSetOrder description].
      *
      * @return void
      */
     public function testSetOrder()
     {
         $Items = TableRegistry::get('Items', [
-            'className' => 'Sequence\Test\TestCase\Model\Behavior\Items'
+            'className' => 'Sequence\Test\TestCase\Model\Behavior\Items',
         ]);
 
         $result = $Items->setOrder([
@@ -203,7 +201,7 @@ class SequenceTest extends TestCase
         $GroupedItems = TableRegistry::get('GroupedItems', [
             'table' => 'grouped_items',
             'alias' => 'GroupedItems',
-            'className' => 'Sequence\Test\TestCase\Model\Behavior\GroupedItems'
+            'className' => 'Sequence\Test\TestCase\Model\Behavior\GroupedItems',
         ]);
         $result = $GroupedItems->setOrder([
             ['id' => 4],
@@ -218,11 +216,12 @@ class SequenceTest extends TestCase
     }
 
     /**
-     * [assertOrder description]
+     * [assertOrder description].
      *
      * @param array $expected
      * @param \Cake\ORM\Table $table
      * @param \Cake\ORM\Query $query
+     *
      * @return bool
      */
     public function assertOrder($expected, $table, $query = null)

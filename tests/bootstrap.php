@@ -3,7 +3,7 @@
 use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
 
-/**
+/*
  * Test suite bootstrap for Sequence
  *
  * This function is used to find the location of CakePHP whether CakePHP
@@ -19,7 +19,7 @@ $findRoot = function ($root) {
         }
     } while ($root !== $lastRoot);
 
-    throw new Exception("Cannot find the root of the application, unable to run tests");
+    throw new Exception('Cannot find the root of the application, unable to run tests');
 };
 $root = $findRoot(__FILE__);
 unset($findRoot);
@@ -27,6 +27,7 @@ unset($findRoot);
 chdir($root);
 if (file_exists($root . '/config/bootstrap.php')) {
     require $root . '/config/bootstrap.php';
+
     return;
 }
 

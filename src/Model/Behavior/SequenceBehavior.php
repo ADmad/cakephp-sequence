@@ -136,6 +136,14 @@ class SequenceBehavior extends Behavior
             if (count($newScope) !== count($config['scope'])) {
                 return;
             }
+
+            // Modify where clauses when NULL values are used
+            foreach ($newScope as $field => $value) {
+                if (is_null($value)) {
+                    $newScope[$field . ' IS'] = $value;
+                    unset($newScope[$field]);
+                }
+            }
         }
 
         $orderField = $config['order'];

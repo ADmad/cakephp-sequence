@@ -126,6 +126,60 @@ class SequenceTest extends TestCase
     }
 
     /**
+     * [testSaveNullScoped description].
+     *
+     * @return void
+     */
+    public function testSaveNullScoped()
+    {
+        $GroupedItems = TableRegistry::get('GroupedItems', [
+            'table' => 'grouped_items',
+            'alias' => 'GroupedItems',
+            'className' => 'Sequence\Test\TestCase\Model\Behavior\GroupedItems',
+        ]);
+
+        // Test group 2 (group_field = 2) as group NULL (group_field = null)
+        $GroupedItems->updateAll(['group_field' => null], ['group_field' => 2]);
+
+        // Testing saving a new record (order not specified) sets order to highest + 1
+        $entity = $GroupedItems->newEntity([
+            'name' => 'Item F',
+            'group_field' => null,
+        ]);
+        $entity = $GroupedItems->save($entity);
+        $this->assertOrder([6, 7, 8, 9, 10, (int)$entity->id], $GroupedItems, ['group_field IS' => null]);
+        $this->assertOrder([1, 2, 3, 4, 5], $GroupedItems, ['group_field' => 1]);
+        $this->assertOrder([11, 12, 13, 14, 15], $GroupedItems, ['group_field' => 3]);
+
+        // Test saving new record with order specified
+        $entity = $GroupedItems->newEntity([
+            'name' => 'Item G',
+            'group_field' => null,
+            'position' => 3,
+        ]);
+        $entity = $GroupedItems->save($entity);
+        $this->assertOrder([6, 7, 8, 17, 9, 10, 16], $GroupedItems, ['group_field IS' => null]);
+        $this->assertOrder([1, 2, 3, 4, 5], $GroupedItems, ['group_field' => 1]);
+        $this->assertOrder([11, 12, 13, 14, 15], $GroupedItems, ['group_field' => 3]);
+
+        // Test editing record with new order
+        $entity = $GroupedItems->get(4);
+        $entity->position = 2;
+        $entity = $GroupedItems->save($entity);
+        $this->assertOrder([1, 2, 4, 3, 5], $GroupedItems, ['group_field' => 1]);
+        $this->assertOrder([6, 7, 8, 17, 9, 10, 16], $GroupedItems, ['group_field IS' => null]);
+        $this->assertOrder([11, 12, 13, 14, 15], $GroupedItems, ['group_field' => 3]);
+
+        // Test changing group
+        $entity = $GroupedItems->get(2);
+        $entity->set('group_field', null);
+        $entity = $GroupedItems->save($entity);
+        $this->assertOrder([1, 4, 3, 5], $GroupedItems, ['group_field' => 1]);
+        $this->assertOrder([6, 2, 7, 8, 17, 9, 10, 16], $GroupedItems, ['group_field IS' => null]);
+        $this->assertOrder([11, 12, 13, 14, 15], $GroupedItems, ['group_field' => 3]);
+    }
+
+    /**
      * [testSaveKeyword description].
      *
      * @return void

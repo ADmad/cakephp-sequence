@@ -124,7 +124,7 @@ class SequenceTest extends TestCase
         $this->assertOrder([6, 2, 7, 8, 17, 9, 10, 16], $GroupedItems, ['group_field' => 2]);
         $this->assertOrder([11, 12, 13, 14, 15], $GroupedItems, ['group_field' => 3]);
     }
-    
+
     /**
      * [testSaveNullScoped description].
      *
@@ -137,7 +137,7 @@ class SequenceTest extends TestCase
             'alias' => 'GroupedItems',
             'className' => 'Sequence\Test\TestCase\Model\Behavior\GroupedItems',
         ]);
-        
+
         // Test group 2 (group_field = 2) as group NULL (group_field = null)
         $GroupedItems->updateAll(['group_field' => null], ['group_field' => 2]);
 

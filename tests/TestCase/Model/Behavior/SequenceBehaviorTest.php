@@ -6,10 +6,16 @@ use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
+class Item extends Entity
+{
+    protected $_accessible = ['*' => true, 'id' => false];
+}
+
 class Items extends Table
 {
     public function initialize(array $config)
     {
+        $this->entityClass('Sequence\Test\TestCase\Model\Behavior\Item');
         $this->addBehavior('Sequence.Sequence', ['start' => 0]);
     }
 }
@@ -38,7 +44,11 @@ class KeywordItems extends Table
 
 class SequenceTest extends TestCase
 {
-    public $fixtures = ['plugin.Sequence.Items', 'plugin.Sequence.GroupedItems', 'plugin.Sequence.KeywordItems'];
+    public $fixtures = [
+        'plugin.Sequence.Items',
+        'plugin.Sequence.GroupedItems',
+        'plugin.Sequence.KeywordItems',
+    ];
 
     /**
      * [testSave description].
@@ -242,6 +252,7 @@ class SequenceTest extends TestCase
             'className' => 'Sequence\Test\TestCase\Model\Behavior\Items',
         ]);
 
+        // Array of arrays
         $result = $Items->setOrder([
             ['id' => 4],
             ['id' => 3],
@@ -249,6 +260,29 @@ class SequenceTest extends TestCase
             ['id' => 1],
             ['id' => 5],
         ]);
+        $this->assertTrue($result);
+        $this->assertOrder([4, 3, 2, 1, 5], $Items);
+
+        // Array of ids
+        $result = $Items->setOrder([5, 4, 2, 1, 3]);
+        $this->assertTrue($result);
+        $this->assertOrder([5, 4, 2, 1, 3], $Items);
+
+        // Array of entities
+        $entities = $Items->newEntities(
+            [
+                ['id' => 4],
+                ['id' => 3],
+                ['id' => 2],
+                ['id' => 1],
+                ['id' => 5],
+            ],
+            ['accessibleFields' => ['id' => true]]
+        );
+        foreach ($entities as &$entity) {
+            $entity->isNew(false);
+        }
+        $result = $Items->setOrder($entities);
         $this->assertTrue($result);
         $this->assertOrder([4, 3, 2, 1, 5], $Items);
 

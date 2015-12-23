@@ -261,35 +261,51 @@ class SequenceBehavior extends Behavior
     /**
      * Set order for list of records provided.
      *
-     * @param array $data Data.
+     * Records can be provided as array of entities or array of associative
+     * arrays like `[['id' => 1], ['id' => 2]]` or array of primary key values
+     * like `[1, 2]`.
+     *
+     * @param array|\Cake\Datasource\EntityInterface $data Records.
      *
      * @return bool
      */
-    public function setOrder($data)
+    public function setOrder(array $records)
     {
         $config = $this->config();
         $table = $this->_table;
 
-        $order = $this->_config['start'];
-        foreach ($data as $key => $record) {
-            $data[$key][$this->_config['order']] = $order++;
-        }
-
         $table->removeBehavior('Sequence');
 
-        $return = $table->connection()->transactional(function ($connection) use ($table, $data) {
-            $entities = $table->newEntities($data);
+        $return = $table->connection()->transactional(
+            function ($connection) use ($table, $records, $config) {
+                $order = $this->_config['start'];
+                $field = $this->_config['order'];
 
-            foreach ($entities as $entity) {
-                $entity->isNew(false);
-                $r = $table->save($entity, ['atomic' => false, 'validate' => false]);
-                if ($r === false) {
-                    return false;
+                foreach ($records as $record) {
+                    if (is_scalar($record)) {
+                        $record = [$table->primaryKey() => $record];
+                    }
+
+                    if (is_array($record)) {
+                        $entity = $table->newEntity();
+                        $record = $entity->set($record, ['guard' => false]);
+                        $record->isNew(false);
+                    }
+
+                    $record->set($field, $order++);
+
+                    $r = $table->save(
+                        $record,
+                        ['atomic' => false, 'checkRules' => false]
+                    );
+                    if ($r === false) {
+                        return false;
+                    }
                 }
-            }
 
-            return true;
-        });
+                return true;
+            }
+        );
 
         $table->addBehavior('Sequence.Sequence', $config);
 

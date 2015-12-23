@@ -44,11 +44,10 @@ class KeywordItems extends Table
 
 class SequenceTest extends TestCase
 {
-
     public $fixtures = [
         'plugin.Sequence.Items',
         'plugin.Sequence.GroupedItems',
-        'plugin.Sequence.KeywordItems'
+        'plugin.Sequence.KeywordItems',
     ];
 
     /**

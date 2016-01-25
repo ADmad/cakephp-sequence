@@ -1,4 +1,4 @@
-# Sequence plugin for CakePHP 3.0+ to maintain ordered list of records
+# Sequence plugin to maintain ordered list of records
 
 [![Build Status](https://img.shields.io/travis/ADmad/cakephp-sequence/master.svg?style=flat-square)](https://travis-ci.org/ADmad/cakephp-sequence)
 [![Coverage](https://img.shields.io/coveralls/ADmad/cakephp-sequence/master.svg?style=flat-square)](https://coveralls.io/r/ADmad/cakephp-sequence)
@@ -15,9 +15,37 @@ The recommended way to install composer packages is:
 composer require admad/cakephp-sequence
 ```
 
-## Todo
+Then load the plugin by adding the following to your app's config/boostrap.php:
 
-- Improve this README :P
+\Cake\Core\Plugin::load('ADmad/Sequence');
+
+or using CakePHP's console:
+
+./bin/cake plugin load ADmad/Sequence
+
+## How it works
+
+`SequenceBehavior` provided by this plugin maintains a contiguous sequence of 
+integers in a selected column, for records in a table records (optionally with grouping) 
+when adding, editing (including moving groups) or deleting records.
+
+## Usage
+
+Add the `SequenceBehavior` for your table and viola:
+
+```php
+$this->addBehavior('ADmad/Sequence');
+```
+
+You can customize various options as shown:
+
+```php
+$this->addBehavior('ADmad/Sequence', [
+    'order' => 'position', // Field to use to store integer sequence. Default "position".
+    'scope' => ['group_id'], // Array of field names to use for grouping records. Default [].
+    'start' => 1, // Initial value for sequence. Default 1.
+]);
+```
 
 ## Acknowledgement
 

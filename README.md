@@ -17,11 +17,15 @@ composer require admad/cakephp-sequence
 
 Then load the plugin by adding the following to your app's config/boostrap.php:
 
+```php
 \Cake\Core\Plugin::load('ADmad/Sequence');
+```
 
 or using CakePHP's console:
 
+```
 ./bin/cake plugin load ADmad/Sequence
+```
 
 ## How it works
 

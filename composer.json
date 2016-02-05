@@ -14,12 +14,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Sequence\\": "src"
+            "ADmad\\Sequence\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Sequence\\Test\\": "tests",
+            "ADmad\\Sequence\\Test\\": "tests",
             "Cake\\Test\\": "./vendor/cakephp/cakephp/tests"
         }
     }

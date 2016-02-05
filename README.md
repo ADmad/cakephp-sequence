@@ -7,30 +7,28 @@
 
 ## Installation
 
-You can install this plugin into your CakePHP application using [composer](http://getcomposer.org).
-
-The recommended way to install composer packages is:
+Install this plugin into your CakePHP application using [composer](http://getcomposer.org):
 
 ```
 composer require admad/cakephp-sequence
 ```
 
-Then load the plugin by adding the following to your app's config/boostrap.php:
+Then load the plugin by either running:
+
+```bash
+./bin/cake plugin load ADmad/Sequence
+```
+
+or adding the following line to `config/bootstrap.php`:
 
 ```php
 \Cake\Core\Plugin::load('ADmad/Sequence');
 ```
 
-or using CakePHP's console:
-
-```
-./bin/cake plugin load ADmad/Sequence
-```
-
 ## How it works
 
-`SequenceBehavior` provided by this plugin maintains a contiguous sequence of 
-integers in a selected column, for records in a table records (optionally with grouping) 
+`SequenceBehavior` provided by this plugin maintains a contiguous sequence of
+integers in a selected column, for records in a table records (optionally with grouping)
 when adding, editing (including moving groups) or deleting records.
 
 ## Usage
@@ -38,13 +36,13 @@ when adding, editing (including moving groups) or deleting records.
 Add the `SequenceBehavior` for your table and viola:
 
 ```php
-$this->addBehavior('ADmad/Sequence');
+$this->addBehavior('ADmad/Sequence.Sequence');
 ```
 
 You can customize various options as shown:
 
 ```php
-$this->addBehavior('ADmad/Sequence', [
+$this->addBehavior('ADmad/Sequence.Sequence', [
     'order' => 'position', // Field to use to store integer sequence. Default "position".
     'scope' => ['group_id'], // Array of field names to use for grouping records. Default [].
     'start' => 1, // Initial value for sequence. Default 1.

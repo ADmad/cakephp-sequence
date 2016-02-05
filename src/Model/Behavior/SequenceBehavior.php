@@ -1,5 +1,5 @@
 <?php
-namespace Sequence\Model\Behavior;
+namespace ADmad\Sequence\Model\Behavior;
 
 use ArrayObject;
 use Cake\Database\Expression\IdentifierExpression;
@@ -307,7 +307,7 @@ class SequenceBehavior extends Behavior
             }
         );
 
-        $table->addBehavior('Sequence.Sequence', $config);
+        $table->addBehavior('ADmad/Sequence.Sequence', $config);
 
         return $return;
     }

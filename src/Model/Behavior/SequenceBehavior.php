@@ -287,11 +287,17 @@ class SequenceBehavior extends Behavior
                     }
 
                     if (is_array($record)) {
-                        $entity = $table->newEntity();
-                        $record = $entity->set($record, ['guard' => false]);
+                        $record = $table->newEntity($record, [
+                            'fieldList' => array_keys($record),
+                            'accessibleFields' => [
+                                $table->primaryKey() => true
+                            ]
+                        ]);
                         $record->isNew(false);
+                        $record->dirty($table->primaryKey(), false);
                     }
 
+                    $record->accessible($field);
                     $record->set($field, $order++);
 
                     $r = $table->save(
@@ -405,7 +411,7 @@ class SequenceBehavior extends Behavior
      *
      * @param string $direction Whether to increment or decrement the field.
      *
-     * @return Cake\Database\Expression\QueryExpression QueryExpression to modify the order field
+     * @return \Cake\Database\Expression\QueryExpression QueryExpression to modify the order field
      */
     protected function _getUpdateExpression($direction = '+')
     {

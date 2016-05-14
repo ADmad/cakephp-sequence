@@ -290,8 +290,8 @@ class SequenceBehavior extends Behavior
                         $record = $table->newEntity($record, [
                             'fieldList' => array_keys($record),
                             'accessibleFields' => [
-                                $table->primaryKey() => true
-                            ]
+                                $table->primaryKey() => true,
+                            ],
                         ]);
                         $record->isNew(false);
                         $record->dirty($table->primaryKey(), false);

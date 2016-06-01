@@ -289,6 +289,7 @@ class SequenceBehavior extends Behavior
                     if (is_array($record)) {
                         $record = $table->newEntity($record, [
                             'fieldList' => array_keys($record),
+                            'validate' => false,
                             'accessibleFields' => [
                                 $table->primaryKey() => true
                             ]

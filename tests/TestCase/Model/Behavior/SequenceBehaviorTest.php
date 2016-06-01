@@ -251,6 +251,7 @@ class SequenceTest extends TestCase
         $Items = TableRegistry::get('Items', [
             'className' => 'ADmad\Sequence\Test\TestCase\Model\Behavior\Items',
         ]);
+        $Items->validator()->requirePresence('name');
 
         // Array of arrays
         $result = $Items->setOrder([
@@ -267,6 +268,8 @@ class SequenceTest extends TestCase
         $result = $Items->setOrder([5, 4, 2, 1, 3]);
         $this->assertTrue($result);
         $this->assertOrder([5, 4, 2, 1, 3], $Items);
+
+        $Items->validator()->requirePresence('name', false);
 
         // Array of entities
         $entities = $Items->newEntities(

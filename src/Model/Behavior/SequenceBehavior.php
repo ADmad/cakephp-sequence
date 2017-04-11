@@ -342,19 +342,22 @@ class SequenceBehavior extends Behavior
 
         if (count($fields) != count($values)) {
             $primaryKey = $entity->get($this->_table->primaryKey());
-            $values = $this->_table->get(
+            $entity = $this->_table->get(
                 $primaryKey,
                 [
                     'fields' => $fields,
                     'limit' => 1,
                 ]
-            )
-            ->toArray();
+            );
+            $virtuals = $entity->virtualProperties();
+            $values = $entity->toArray();
+            foreach($entity->virtualProperties() as $virtual) {
+                unset($values[$virtual]);
+            }
         }
 
         $order = $values[$config['order']];
         unset($values[$config['order']]);
-
         return [$order, $values];
     }
 

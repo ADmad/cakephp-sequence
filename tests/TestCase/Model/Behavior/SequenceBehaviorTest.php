@@ -9,6 +9,11 @@ use Cake\TestSuite\TestCase;
 class Item extends Entity
 {
     protected $_accessible = ['*' => true, 'id' => false];
+    
+    protected function _getVirtualField()
+    {
+        return "dummy";
+    }    
 }
 
 class Items extends Table

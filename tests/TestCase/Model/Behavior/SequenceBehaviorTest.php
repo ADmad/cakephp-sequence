@@ -9,6 +9,8 @@ use Cake\TestSuite\TestCase;
 class Item extends Entity
 {
     protected $_accessible = ['*' => true, 'id' => false];
+
+    protected $_virtual = ['virutal_name'];
 }
 
 class Items extends Table

@@ -342,14 +342,8 @@ class SequenceBehavior extends Behavior
 
         if (count($fields) != count($values)) {
             $primaryKey = $entity->get($this->_table->primaryKey());
-            $values = $this->_table->get(
-                $primaryKey,
-                [
-                    'fields' => $fields,
-                    'limit' => 1,
-                ]
-            )
-            ->toArray();
+            $entity = $this->_table->get($primaryKey, ['fields' => $fields]);
+            $values = $entity->extract($fields);
         }
 
         $order = $values[$config['order']];

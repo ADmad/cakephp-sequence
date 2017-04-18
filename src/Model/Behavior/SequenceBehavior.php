@@ -291,8 +291,8 @@ class SequenceBehavior extends Behavior
                             'fieldList' => array_keys($record),
                             'validate' => false,
                             'accessibleFields' => [
-                                $table->primaryKey() => true
-                            ]
+                                $table->primaryKey() => true,
+                            ],
                         ]);
                         $record->isNew(false);
                         $record->dirty($table->primaryKey(), false);

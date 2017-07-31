@@ -6,6 +6,7 @@ use Cake\Database\Expression\IdentifierExpression;
 use Cake\Event\Event;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
+use Cake\ORM\EntityInterface;
 use Cake\ORM\Query;
 
 /**
@@ -127,23 +128,9 @@ class SequenceBehavior extends Behavior
         $config = $this->config();
 
         $newOrder = null;
-        $newScope = [];
-
-        // If scope are specified and data for all scope fields is not
-        // provided we cannot calculate new order
-        if ($config['scope']) {
-            $newScope = $entity->extract($config['scope']);
-            if (count($newScope) !== count($config['scope'])) {
-                return;
-            }
-
-            // Modify where clauses when NULL values are used
-            foreach ($newScope as $field => $value) {
-                if (is_null($value)) {
-                    $newScope[$field . ' IS'] = $value;
-                    unset($newScope[$field]);
-                }
-            }
+        $newScope = $this->_getScope($entity);
+        if ($newScope === false) {
+            return;
         }
 
         $orderField = $config['order'];
@@ -259,6 +246,88 @@ class SequenceBehavior extends Behavior
     }
 
     /**
+     * Decrease the position of the entity on the list
+     *
+     * If a "higher" entity exists, this will also swap positions with it
+     *
+     * @param \Cake\ORM\Entity $entity The entity that is going to be saved.
+     * @return bool
+     */
+    public function moveUp(EntityInterface $entity)
+    {
+        return _movePosition($entity, $direction = '-');
+    }
+
+    /**
+     * Increase the position of the entity on the list
+     *
+     * If a "lower" entity exists, this will also swap positions with it
+     *
+     * @param \Cake\ORM\Entity $entity The entity that is going to be saved.
+     * @return bool
+     */
+    public function moveDown(EntityInterface $entity)
+    {
+        return _movePosition($entity, $direction = '+');
+    }
+
+    /**
+     * Change the position of the entity on the list by a single position
+     *
+     * If an entity that conflicts with the new position already exists, this
+     * will also swap positions with it
+     *
+     * @param \Cake\ORM\Entity $entity The entity that is going to be saved.
+     * @param string $direction Whether to increment or decrement the field.
+     * @return bool
+     */
+    protected function _movePosition(EntityInterface $entity, $direction = '+')
+    {
+        if ($entity->isNew()) {
+            return false;
+        }
+
+        $scope = $this->_getScope($entity);
+        if ($scope === false) {
+            return false;
+        }
+
+        $config = $this->config();
+        $table = $this->_table;
+
+        $table->removeBehavior('Sequence');
+
+        $return = $table->connection()->transactional(
+            function ($connection) use ($table, $entity, $config, $scope, $direction) {
+                $orderField = $config['order'];
+                $oldOrder = $entity->get($orderField);
+                $newOrder = $entity->get($orderField) - 1;
+                if ($direction === '+') {
+                    $newOrder = $entity->get($orderField) + 1;
+                }
+
+                $previousEntity = $table->find()
+                                        ->where(array_merge($scope, [$orderField => $newOrder]))
+                                        ->first();
+                if (!empty($previousEntity)) {
+                    $previousEntity->set($orderField, $oldOrder);
+                    if (!$table->save($previousEntity)) {
+                        return false;
+                    }
+                }
+
+                $entity->set($orderField, $newOrder);
+
+                return $table->save($entity);
+            }
+        );
+
+        $table->addBehavior('ADmad/Sequence.Sequence', $config);
+
+        return $return;
+    }
+
+    /**
      * Set order for list of records provided.
      *
      * Records can be provided as array of entities or array of associative
@@ -350,6 +419,37 @@ class SequenceBehavior extends Behavior
         unset($values[$config['order']]);
 
         return [$order, $values];
+    }
+
+    /**
+     * Get scope values.
+     *
+     * @param \Cake\ORM\Entity $entity Entity.
+     *
+     * @return array|bool
+     */
+    protected function _getScope(Entity $entity)
+    {
+        $scope = [];
+
+        // If scope are specified and data for all scope fields is not
+        // provided we cannot calculate new order
+        if ($config['scope']) {
+            $scope = $entity->extract($config['scope']);
+            if (count($scope) !== count($config['scope'])) {
+                return false;
+            }
+
+            // Modify where clauses when NULL values are used
+            foreach ($scope as $field => $value) {
+                if (is_null($value)) {
+                    $newScope[$field . ' IS'] = $value;
+                    unset($newScope[$field]);
+                }
+            }
+        }
+
+        return $scope;
     }
 
     /**

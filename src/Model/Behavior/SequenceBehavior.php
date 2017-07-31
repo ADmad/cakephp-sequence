@@ -3,10 +3,10 @@ namespace ADmad\Sequence\Model\Behavior;
 
 use ArrayObject;
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
-use Cake\ORM\EntityInterface;
 use Cake\ORM\Query;
 
 /**

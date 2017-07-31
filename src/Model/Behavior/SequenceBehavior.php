@@ -445,8 +445,8 @@ class SequenceBehavior extends Behavior
             // Modify where clauses when NULL values are used
             foreach ($scope as $field => $value) {
                 if (is_null($value)) {
-                    $newScope[$field . ' IS'] = $value;
-                    unset($newScope[$field]);
+                    $scope[$field . ' IS'] = $value;
+                    unset($scope[$field]);
                 }
             }
         }

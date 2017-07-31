@@ -250,7 +250,7 @@ class SequenceBehavior extends Behavior
      *
      * If a "higher" entity exists, this will also swap positions with it
      *
-     * @param \Cake\ORM\Entity $entity The entity that is going to be saved.
+     * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved.
      * @return bool
      */
     public function moveUp(EntityInterface $entity)
@@ -263,7 +263,7 @@ class SequenceBehavior extends Behavior
      *
      * If a "lower" entity exists, this will also swap positions with it
      *
-     * @param \Cake\ORM\Entity $entity The entity that is going to be saved.
+     * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved.
      * @return bool
      */
     public function moveDown(EntityInterface $entity)
@@ -277,8 +277,9 @@ class SequenceBehavior extends Behavior
      * If an entity that conflicts with the new position already exists, this
      * will also swap positions with it
      *
-     * @param \Cake\ORM\Entity $entity The entity that is going to be saved.
+     * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved.
      * @param string $direction Whether to increment or decrement the field.
+     *
      * @return bool
      */
     protected function _movePosition(EntityInterface $entity, $direction = '+')
@@ -424,11 +425,11 @@ class SequenceBehavior extends Behavior
     /**
      * Get scope values.
      *
-     * @param \Cake\ORM\Entity $entity Entity.
+     * @param \Cake\Datasource\EntityInterface $entity Entity.
      *
      * @return array|bool
      */
-    protected function _getScope(Entity $entity)
+    protected function _getScope(EntityInterface $entity)
     {
         $scope = [];
 

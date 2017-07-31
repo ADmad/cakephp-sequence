@@ -432,6 +432,7 @@ class SequenceBehavior extends Behavior
     protected function _getScope(EntityInterface $entity)
     {
         $scope = [];
+        $config = $this->config();
 
         // If scope are specified and data for all scope fields is not
         // provided we cannot calculate new order

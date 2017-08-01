@@ -255,7 +255,7 @@ class SequenceBehavior extends Behavior
      */
     public function moveUp(EntityInterface $entity)
     {
-        return _movePosition($entity, $direction = '-');
+        return $this->_movePosition($entity, $direction = '-');
     }
 
     /**
@@ -268,7 +268,7 @@ class SequenceBehavior extends Behavior
      */
     public function moveDown(EntityInterface $entity)
     {
-        return _movePosition($entity, $direction = '+');
+        return $this->_movePosition($entity, $direction = '+');
     }
 
     /**
@@ -301,6 +301,11 @@ class SequenceBehavior extends Behavior
         $return = $table->connection()->transactional(
             function ($connection) use ($table, $entity, $config, $scope, $direction) {
                 $orderField = $config['order'];
+                // Nothing to do if trying to move up entity already at first position
+                if ($direction === '-' && $entity->get($orderField) === $config['start']) {
+                    return true;
+                }
+
                 $oldOrder = $entity->get($orderField);
                 $newOrder = $entity->get($orderField) - 1;
                 if ($direction === '+') {
@@ -312,20 +317,23 @@ class SequenceBehavior extends Behavior
                                         ->first();
                 if (!empty($previousEntity)) {
                     $previousEntity->set($orderField, $oldOrder);
-                    if (!$table->save($previousEntity)) {
+                    if (!$table->save($previousEntity, ['atomic' => false, 'checkRules' => false])) {
                         return false;
                     }
+                // Nothing to do if trying to move down entity already at last position
+                } elseif ($direction === '+') {
+                    return true;
                 }
 
                 $entity->set($orderField, $newOrder);
 
-                return $table->save($entity);
+                return $table->save($entity, ['atomic' => false, 'checkRules' => false]);
             }
         );
 
         $table->addBehavior('ADmad/Sequence.Sequence', $config);
 
-        return $return;
+        return (bool)$return;
     }
 
     /**

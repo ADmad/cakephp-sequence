@@ -355,7 +355,7 @@ class SequenceBehavior extends Behavior
         $table->removeBehavior('Sequence');
 
         $return = $table->connection()->transactional(
-            function ($connection) use ($table, $records, $config) {
+            function ($connection) use ($table, $records) {
                 $order = $this->_config['start'];
                 $field = $this->_config['order'];
 

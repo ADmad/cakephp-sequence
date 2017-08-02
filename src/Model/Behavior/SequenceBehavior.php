@@ -3,6 +3,7 @@ namespace ADmad\Sequence\Model\Behavior;
 
 use ArrayObject;
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
@@ -127,23 +128,9 @@ class SequenceBehavior extends Behavior
         $config = $this->config();
 
         $newOrder = null;
-        $newScope = [];
-
-        // If scope are specified and data for all scope fields is not
-        // provided we cannot calculate new order
-        if ($config['scope']) {
-            $newScope = $entity->extract($config['scope']);
-            if (count($newScope) !== count($config['scope'])) {
-                return;
-            }
-
-            // Modify where clauses when NULL values are used
-            foreach ($newScope as $field => $value) {
-                if (is_null($value)) {
-                    $newScope[$field . ' IS'] = $value;
-                    unset($newScope[$field]);
-                }
-            }
+        $newScope = $this->_getScope($entity);
+        if ($newScope === false) {
+            return;
         }
 
         $orderField = $config['order'];
@@ -259,6 +246,97 @@ class SequenceBehavior extends Behavior
     }
 
     /**
+     * Decrease the position of the entity on the list
+     *
+     * If a "higher" entity exists, this will also swap positions with it
+     *
+     * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved.
+     * @return bool
+     */
+    public function moveUp(EntityInterface $entity)
+    {
+        return $this->_movePosition($entity, $direction = '-');
+    }
+
+    /**
+     * Increase the position of the entity on the list
+     *
+     * If a "lower" entity exists, this will also swap positions with it
+     *
+     * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved.
+     * @return bool
+     */
+    public function moveDown(EntityInterface $entity)
+    {
+        return $this->_movePosition($entity, $direction = '+');
+    }
+
+    /**
+     * Change the position of the entity on the list by a single position
+     *
+     * If an entity that conflicts with the new position already exists, this
+     * will also swap positions with it
+     *
+     * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved.
+     * @param string $direction Whether to increment or decrement the field.
+     *
+     * @return bool
+     */
+    protected function _movePosition(EntityInterface $entity, $direction = '+')
+    {
+        if ($entity->isNew()) {
+            return false;
+        }
+
+        $scope = $this->_getScope($entity);
+        if ($scope === false) {
+            return false;
+        }
+
+        $config = $this->config();
+        $table = $this->_table;
+
+        $table->removeBehavior('Sequence');
+
+        $return = $table->connection()->transactional(
+            function ($connection) use ($table, $entity, $config, $scope, $direction) {
+                $orderField = $config['order'];
+                // Nothing to do if trying to move up entity already at first position
+                if ($direction === '-' && $entity->get($orderField) === $config['start']) {
+                    return true;
+                }
+
+                $oldOrder = $entity->get($orderField);
+                $newOrder = $entity->get($orderField) - 1;
+                if ($direction === '+') {
+                    $newOrder = $entity->get($orderField) + 1;
+                }
+
+                $previousEntity = $table->find()
+                                        ->where(array_merge($scope, [$orderField => $newOrder]))
+                                        ->first();
+                if (!empty($previousEntity)) {
+                    $previousEntity->set($orderField, $oldOrder);
+                    if (!$table->save($previousEntity, ['atomic' => false, 'checkRules' => false])) {
+                        return false;
+                    }
+                // Nothing to do if trying to move down entity already at last position
+                } elseif ($direction === '+') {
+                    return true;
+                }
+
+                $entity->set($orderField, $newOrder);
+
+                return $table->save($entity, ['atomic' => false, 'checkRules' => false]);
+            }
+        );
+
+        $table->addBehavior('ADmad/Sequence.Sequence', $config);
+
+        return (bool)$return;
+    }
+
+    /**
      * Set order for list of records provided.
      *
      * Records can be provided as array of entities or array of associative
@@ -277,7 +355,7 @@ class SequenceBehavior extends Behavior
         $table->removeBehavior('Sequence');
 
         $return = $table->connection()->transactional(
-            function ($connection) use ($table, $records, $config) {
+            function ($connection) use ($table, $records) {
                 $order = $this->_config['start'];
                 $field = $this->_config['order'];
 
@@ -350,6 +428,38 @@ class SequenceBehavior extends Behavior
         unset($values[$config['order']]);
 
         return [$order, $values];
+    }
+
+    /**
+     * Get scope values.
+     *
+     * @param \Cake\Datasource\EntityInterface $entity Entity.
+     *
+     * @return array|bool
+     */
+    protected function _getScope(EntityInterface $entity)
+    {
+        $scope = [];
+        $config = $this->config();
+
+        // If scope are specified and data for all scope fields is not
+        // provided we cannot calculate new order
+        if ($config['scope']) {
+            $scope = $entity->extract($config['scope']);
+            if (count($scope) !== count($config['scope'])) {
+                return false;
+            }
+
+            // Modify where clauses when NULL values are used
+            foreach ($scope as $field => $value) {
+                if (is_null($value)) {
+                    $scope[$field . ' IS'] = $value;
+                    unset($scope[$field]);
+                }
+            }
+        }
+
+        return $scope;
     }
 
     /**

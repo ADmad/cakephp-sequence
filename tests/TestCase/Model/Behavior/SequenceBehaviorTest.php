@@ -311,6 +311,94 @@ class SequenceTest extends TestCase
     }
 
     /**
+     * testMoveUp
+     *
+     * @return void
+     */
+    public function testMoveUp()
+    {
+        $Items = TableRegistry::get('Items', [
+            'className' => 'ADmad\Sequence\Test\TestCase\Model\Behavior\Items',
+        ]);
+
+        $entity = $Items->get(4);
+        $result = $Items->moveUp($entity);
+
+        $this->assertTrue($result);
+        $this->assertOrder([1, 2, 4, 3, 5], $Items);
+
+        // Move up entity already at first position
+        $entity = $Items->get(1);
+        $result = $Items->moveUp($entity);
+
+        $this->assertTrue($result);
+        $this->assertOrder([1, 2, 4, 3, 5], $Items);
+
+        $GroupedItems = TableRegistry::get('GroupedItems', [
+            'table' => 'grouped_items',
+            'alias' => 'GroupedItems',
+            'className' => 'ADmad\Sequence\Test\TestCase\Model\Behavior\GroupedItems',
+        ]);
+
+        $entity = $GroupedItems->get(4);
+        $result = $GroupedItems->moveUp($entity);
+
+        $this->assertTrue($result);
+        $this->assertOrder([1, 2, 4, 3, 5], $GroupedItems, ['group_field' => 1]);
+
+        // Move up entity already at first position
+        $entity = $GroupedItems->get(1);
+        $result = $GroupedItems->moveUp($entity);
+
+        $this->assertTrue($result);
+        $this->assertOrder([1, 2, 4, 3, 5], $GroupedItems, ['group_field' => 1]);
+    }
+
+    /**
+     * moveDown
+     *
+     * @return void
+     */
+    public function testMoveDown()
+    {
+        $Items = TableRegistry::get('Items', [
+            'className' => 'ADmad\Sequence\Test\TestCase\Model\Behavior\Items',
+        ]);
+
+        $entity = $Items->get(2);
+        $result = $Items->moveDown($entity);
+
+        $this->assertTrue($result);
+        $this->assertOrder([1, 3, 2, 4, 5], $Items);
+
+        // Move down entity already at last position
+        $entity = $Items->get(5);
+        $result = $Items->moveDown($entity);
+
+        $this->assertTrue($result);
+        $this->assertOrder([1, 3, 2, 4, 5], $Items);
+
+        $GroupedItems = TableRegistry::get('GroupedItems', [
+            'table' => 'grouped_items',
+            'alias' => 'GroupedItems',
+            'className' => 'ADmad\Sequence\Test\TestCase\Model\Behavior\GroupedItems',
+        ]);
+
+        $entity = $GroupedItems->get(2);
+        $result = $GroupedItems->moveDown($entity);
+
+        $this->assertTrue($result);
+        $this->assertOrder([1, 3, 2, 4, 5], $GroupedItems, ['group_field' => 1]);
+
+        // Move down entity already at last position
+        $entity = $GroupedItems->get(5);
+        $result = $GroupedItems->moveDown($entity);
+
+        $this->assertTrue($result);
+        $this->assertOrder([1, 3, 2, 4, 5], $GroupedItems, ['group_field' => 1]);
+    }
+
+    /**
      * [assertOrder description].
      *
      * @param array $expected

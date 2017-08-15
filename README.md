@@ -49,6 +49,33 @@ $this->addBehavior('ADmad/Sequence.Sequence', [
 ]);
 ```
 
+Now whenever to add a new record it's `position` field will be automatically
+set to current largest value in sequence plus one.
+
+When editing records you can set the position to a new value and the position of
+other records in the list will be automatically updated to maintain proper
+sequence.
+
+When doing a find on the table an order clause is automatically added to the
+query to order by the position field if a order clause has not already been set.
+
+### Methods
+
+#### moveUp(\Cake\Datasource\EntityInterface $entity)
+Move up record by one position:
+
+```php
+$modelObject->moveUp($entity);
+```
+
+#### moveDown(\Cake\Datasource\EntityInterface $entity)
+Move down record by one position:
+
+```php
+$modelObject->moveDown($entity);
+```
+
 ## Acknowledgement
 
-Shout out to @neilcrookes for his wonderful Sequence Behavior for CakePHP 1.3 which was the inspiration for this plugin.
+Shout out to @neilcrookes for his wonderful Sequence Behavior for CakePHP 1.3
+which was the inspiration for this plugin.

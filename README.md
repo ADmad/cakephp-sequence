@@ -75,6 +75,11 @@ Move down record by one position:
 $modelObject->moveDown($entity);
 ```
 
+#### setOrder(array $record)
+Set order for list of records provided. Records can be provided as array of
+entities or array of associative arrays like `[['id' => 1], ['id' => 2]]` or
+array of primary key values like `[1, 2]`.
+
 ## Acknowledgement
 
 Shout out to @neilcrookes for his wonderful Sequence Behavior for CakePHP 1.3

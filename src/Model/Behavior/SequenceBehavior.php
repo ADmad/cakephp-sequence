@@ -110,7 +110,7 @@ class SequenceBehavior extends Behavior
     public function beforeFind(Event $event, Query $query, ArrayObject $options)
     {
         if (!$query->clause('order')) {
-            $query->order([$this->_table->alias() . '.' . $this->_config['order'] => 'ASC']);
+            $query->order([$this->_table->getAlias() . '.' . $this->_config['order'] => 'ASC']);
         }
     }
 
@@ -125,7 +125,7 @@ class SequenceBehavior extends Behavior
      */
     public function beforeSave(Event $event, Entity $entity, ArrayObject $options)
     {
-        $config = $this->config();
+        $config = $this->getConfig();
 
         $newOrder = null;
         $newScope = $this->_getScope($entity);
@@ -293,12 +293,12 @@ class SequenceBehavior extends Behavior
             return false;
         }
 
-        $config = $this->config();
+        $config = $this->getConfig();
         $table = $this->_table;
 
         $table->removeBehavior('Sequence');
 
-        $return = $table->connection()->transactional(
+        $return = $table->getConnection()->transactional(
             function ($connection) use ($table, $entity, $config, $scope, $direction) {
                 $orderField = $config['order'];
                 // Nothing to do if trying to move up entity already at first position
@@ -343,40 +343,42 @@ class SequenceBehavior extends Behavior
      * arrays like `[['id' => 1], ['id' => 2]]` or array of primary key values
      * like `[1, 2]`.
      *
-     * @param array|\Cake\Datasource\EntityInterface $records Records.
+     * @param array $records Records.
      *
      * @return bool
      */
     public function setOrder(array $records)
     {
-        $config = $this->config();
+        $config = $this->getConfig();
         $table = $this->_table;
 
         $table->removeBehavior('Sequence');
 
-        $return = $table->connection()->transactional(
+        $return = $table->getConnection()->transactional(
             function ($connection) use ($table, $records) {
                 $order = $this->_config['start'];
                 $field = $this->_config['order'];
 
+                /** @var string $primaryKeyField */
+                $primaryKeyField = $table->getPrimaryKey();
                 foreach ($records as $record) {
                     if (is_scalar($record)) {
-                        $record = [$table->primaryKey() => $record];
+                        $record = [$primaryKeyField => $record];
                     }
 
                     if (is_array($record)) {
                         $record = $table->newEntity($record, [
-                            'fieldList' => array_keys($record),
+                            'fields' => array_keys($record),
                             'validate' => false,
                             'accessibleFields' => [
-                                $table->primaryKey() => true
-                            ]
+                                $primaryKeyField => true,
+                            ],
                         ]);
                         $record->isNew(false);
-                        $record->dirty($table->primaryKey(), false);
+                        $record->setDirty($primaryKeyField, false);
                     }
 
-                    $record->accessible($field);
+                    $record->setAccess($field, true);
                     $record->set($field, $order++);
 
                     $r = $table->save(
@@ -406,12 +408,12 @@ class SequenceBehavior extends Behavior
      */
     protected function _getOldValues(Entity $entity)
     {
-        $config = $this->config();
+        $config = $this->getConfig();
         $fields = array_merge($config['scope'], [$config['order']]);
 
         $values = [];
         foreach ($fields as $field) {
-            if ($entity->dirty($field)) {
+            if ($entity->isDirty($field)) {
                 $values[$field] = $entity->getOriginal($field);
             } elseif ($entity->has($field)) {
                 $values[$field] = $entity->get($field);
@@ -419,7 +421,7 @@ class SequenceBehavior extends Behavior
         }
 
         if (count($fields) != count($values)) {
-            $primaryKey = $entity->get($this->_table->primaryKey());
+            $primaryKey = $entity->get($this->_table->getPrimaryKey());
             $entity = $this->_table->get($primaryKey, ['fields' => $fields]);
             $values = $entity->extract($fields);
         }
@@ -440,7 +442,7 @@ class SequenceBehavior extends Behavior
     protected function _getScope(EntityInterface $entity)
     {
         $scope = [];
-        $config = $this->config();
+        $config = $this->getConfig();
 
         // If scope are specified and data for all scope fields is not
         // provided we cannot calculate new order
@@ -480,7 +482,7 @@ class SequenceBehavior extends Behavior
             ->where($scope)
             ->order([$orderField => 'DESC'])
             ->limit(1)
-            ->hydrate(false)
+            ->enableHydration(false)
             ->first();
 
         // If there is a last record (i.e. any) in the set, return the it's order
@@ -525,6 +527,6 @@ class SequenceBehavior extends Behavior
         return $this->_table->query()->newExpr()
             ->add(new IdentifierExpression($field))
             ->add('1')
-            ->type($direction);
+            ->setConjunction($direction);
     }
 }

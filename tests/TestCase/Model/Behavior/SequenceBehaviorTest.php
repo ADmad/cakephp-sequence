@@ -17,7 +17,7 @@ class Items extends Table
 {
     public function initialize(array $config)
     {
-        $this->entityClass('ADmad\Sequence\Test\TestCase\Model\Behavior\Item');
+        $this->setEntityClass('ADmad\Sequence\Test\TestCase\Model\Behavior\Item');
         $this->addBehavior('ADmad/Sequence.Sequence', ['start' => 0]);
     }
 }
@@ -253,7 +253,7 @@ class SequenceTest extends TestCase
         $Items = TableRegistry::get('Items', [
             'className' => 'ADmad\Sequence\Test\TestCase\Model\Behavior\Items',
         ]);
-        $Items->validator()->requirePresence('name');
+        $Items->getValidator()->requirePresence('name');
 
         // Array of arrays
         $result = $Items->setOrder([
@@ -271,7 +271,7 @@ class SequenceTest extends TestCase
         $this->assertTrue($result);
         $this->assertOrder([5, 4, 2, 1, 3], $Items);
 
-        $Items->validator()->requirePresence('name', false);
+        $Items->getValidator()->requirePresence('name', false);
 
         // Array of entities
         $entities = $Items->newEntities(
@@ -416,7 +416,7 @@ class SequenceTest extends TestCase
             $conditions = [];
         }
 
-        $order = $table->behaviors()->Sequence->config('order');
+        $order = $table->behaviors()->Sequence->getConfig('order');
 
         $query = $query ?: $table->find();
 

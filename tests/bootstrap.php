@@ -1,6 +1,4 @@
 <?php
-
-use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
 
 /*
@@ -33,4 +31,4 @@ if (file_exists($root . '/config/bootstrap.php')) {
 
 require dirname(__DIR__) . '/vendor/cakephp/cakephp/tests/bootstrap.php';
 
-ConnectionManager::get('test')->driver()->autoQuoting(true);
+ConnectionManager::get('test')->getDriver()->enableAutoQuoting(true);

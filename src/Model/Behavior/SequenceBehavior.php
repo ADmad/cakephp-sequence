@@ -343,7 +343,7 @@ class SequenceBehavior extends Behavior
      * arrays like `[['id' => 1], ['id' => 2]]` or array of primary key values
      * like `[1, 2]`.
      *
-     * @param array|\Cake\Datasource\EntityInterface $records Records.
+     * @param array $records Records.
      *
      * @return bool
      */
@@ -359,9 +359,11 @@ class SequenceBehavior extends Behavior
                 $order = $this->_config['start'];
                 $field = $this->_config['order'];
 
+                /** @var string $primaryKeyField */
+                $primaryKeyField = $table->getPrimaryKey();
                 foreach ($records as $record) {
                     if (is_scalar($record)) {
-                        $record = [$table->getPrimaryKey() => $record];
+                        $record = [$primaryKeyField => $record];
                     }
 
                     if (is_array($record)) {
@@ -369,11 +371,11 @@ class SequenceBehavior extends Behavior
                             'fields' => array_keys($record),
                             'validate' => false,
                             'accessibleFields' => [
-                                $table->getPrimaryKey() => true,
+                                $primaryKeyField => true,
                             ],
                         ]);
                         $record->isNew(false);
-                        $record->setDirty($table->getPrimaryKey(), false);
+                        $record->setDirty($primaryKeyField, false);
                     }
 
                     $record->setAccess($field, true);

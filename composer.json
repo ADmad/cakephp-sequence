@@ -1,14 +1,15 @@
 {
     "name": "admad/cakephp-sequence",
-    "description": "Sequence plugin for CakePHP 3.0+ to maintain ordered list of records",
+    "description": "Sequence plugin for CakePHP to maintain ordered list of records",
     "keywords": ["cakephp", "orm", "sequence", "list"],
     "type": "cakephp-plugin",
     "license": "MIT",
     "require": {
-        "cakephp/orm": "^3.6"
+        "cakephp/orm": "^3.5"
     },
     "require-dev": {
-        "cakephp/cakephp": "^3.6",
+        "cakephp/chronos": "^1.1",
+        "cakephp/cakephp": "^3.5",
         "phpunit/phpunit": "^5.7.14|^6.0"
     },
     "autoload": {

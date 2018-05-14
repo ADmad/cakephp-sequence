@@ -479,6 +479,7 @@ class SequenceBehavior extends Behavior
 
         // Find the last record in the set
         $last = $this->_table->find()
+            ->select([$orderField])
             ->where($scope)
             ->order([$orderField => 'DESC'])
             ->limit(1)

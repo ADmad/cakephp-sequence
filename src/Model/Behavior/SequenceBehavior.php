@@ -110,7 +110,7 @@ class SequenceBehavior extends Behavior
     public function beforeFind(Event $event, Query $query, ArrayObject $options)
     {
         if (!$query->clause('order')) {
-            $query->order([$this->_table->getAlias() . '.' . $this->_config['order'] => 'ASC']);
+            $query->order([$this->_table->aliasField($this->_config['order']) => 'ASC']);
         }
     }
 
@@ -313,8 +313,9 @@ class SequenceBehavior extends Behavior
                 }
 
                 $previousEntity = $table->find()
-                                        ->where(array_merge($scope, [$orderField => $newOrder]))
-                                        ->first();
+                    ->where(array_merge($scope, [$orderField => $newOrder]))
+                    ->first();
+
                 if (!empty($previousEntity)) {
                     $previousEntity->set($orderField, $oldOrder);
                     if (!$table->save($previousEntity, ['atomic' => false, 'checkRules' => false])) {

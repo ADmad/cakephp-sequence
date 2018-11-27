@@ -49,7 +49,7 @@ $this->addBehavior('ADmad/Sequence.Sequence', [
 ]);
 ```
 
-Now whenever to add a new record it's `position` field will be automatically
+Now whenever to add a new record its `position` field will be automatically
 set to current largest value in sequence plus one.
 
 When editing records you can set the position to a new value and the position of

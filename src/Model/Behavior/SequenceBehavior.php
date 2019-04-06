@@ -69,21 +69,21 @@ class SequenceBehavior extends Behavior
      * @var array
      */
     protected $_defaultConfig = [
-        'order' => 'position',
+        'sequenceField' => 'position',
         'scope' => [],
-        'start' => 1,
+        'startAt' => 1,
     ];
 
     /**
      * Normalize config options.
      *
      * @param array $config Configuration options include:
-     * - order : The field name that stores the sequence number.
+     * - sequenceField : The field name that stores the sequence number.
      *   Defaults is "position".
      * - scope : Array of field names that identify a single group of records
      *   that need to form a contiguous sequence.
      *   Default is empty array, i.e. no scope fields.
-     * - start : You can start your sequence numbers at 0 or 1 or any other.
+     * - startAt : You can start your sequence numbers at 0 or 1 or any other.
      *   Defaults is 1.
      *
      * @return void
@@ -111,7 +111,7 @@ class SequenceBehavior extends Behavior
     public function beforeFind(EventInterface $event, Query $query, ArrayObject $options): void
     {
         if (!$query->clause('order')) {
-            $query->order([$this->_table->aliasField($this->_config['order']) => 'ASC']);
+            $query->order([$this->_table->aliasField($this->_config['sequenceField']) => 'ASC']);
         }
     }
 
@@ -134,7 +134,7 @@ class SequenceBehavior extends Behavior
             return;
         }
 
-        $orderField = $config['order'];
+        $orderField = $config['sequenceField'];
         $newOrder = $entity->get($orderField);
 
         // Adding
@@ -236,7 +236,7 @@ class SequenceBehavior extends Behavior
      */
     public function beforeDelete(EventInterface $event, EntityInterface $entity): void
     {
-        $orderField = $this->_config['order'];
+        $orderField = $this->_config['sequenceField'];
         [$order, $scope] = $this->_getOldValues($entity);
 
         $this->_sync(
@@ -301,9 +301,9 @@ class SequenceBehavior extends Behavior
 
         $return = $table->getConnection()->transactional(
             function ($connection) use ($table, $entity, $config, $scope, $direction) {
-                $orderField = $config['order'];
+                $orderField = $config['sequenceField'];
                 // Nothing to do if trying to move up entity already at first position
-                if ($direction === '-' && $entity->get($orderField) === $config['start']) {
+                if ($direction === '-' && $entity->get($orderField) === $config['startAt']) {
                     return true;
                 }
 
@@ -358,8 +358,8 @@ class SequenceBehavior extends Behavior
 
         $return = $table->getConnection()->transactional(
             function ($connection) use ($table, $records) {
-                $order = $this->_config['start'];
-                $field = $this->_config['order'];
+                $order = $this->_config['startAt'];
+                $field = $this->_config['sequenceField'];
 
                 /** @var string $primaryKeyField */
                 $primaryKeyField = $table->getPrimaryKey();
@@ -411,7 +411,7 @@ class SequenceBehavior extends Behavior
     protected function _getOldValues(EntityInterface $entity): array
     {
         $config = $this->getConfig();
-        $fields = array_merge($config['scope'], [$config['order']]);
+        $fields = array_merge($config['scope'], [$config['sequenceField']]);
 
         $values = [];
         foreach ($fields as $field) {
@@ -428,8 +428,8 @@ class SequenceBehavior extends Behavior
             $values = $entity->extract($fields);
         }
 
-        $order = $values[$config['order']];
-        unset($values[$config['order']]);
+        $order = $values[$config['sequenceField']];
+        unset($values[$config['sequenceField']]);
 
         return [$order, $values];
     }
@@ -477,7 +477,7 @@ class SequenceBehavior extends Behavior
      */
     protected function _getHighestOrder(array $scope = []): int
     {
-        $orderField = $this->_config['order'];
+        $orderField = $this->_config['sequenceField'];
 
         // Find the last record in the set
         $last = $this->_table->find()
@@ -494,7 +494,7 @@ class SequenceBehavior extends Behavior
         }
 
         // If there isn't any records in the set, return the start number minus 1
-        return (int)$this->_config['start'] - 1;
+        return (int)$this->_config['startAt'] - 1;
     }
 
     /**
@@ -525,7 +525,7 @@ class SequenceBehavior extends Behavior
      */
     protected function _getUpdateExpression(string $direction = '+'): QueryExpression
     {
-        $field = $this->_config['order'];
+        $field = $this->_config['sequenceField'];
 
         return $this->_table->query()->newExpr()
             ->add(new IdentifierExpression($field))

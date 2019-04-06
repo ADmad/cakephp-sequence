@@ -383,7 +383,7 @@ class SequenceBehaviorTest extends TestCase
             $conditions = [];
         }
 
-        $order = $table->behaviors()->Sequence->getConfig('order');
+        $order = $table->behaviors()->Sequence->getConfig('sequenceField');
 
         $query = $query ?: $table->find();
 

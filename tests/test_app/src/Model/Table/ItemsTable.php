@@ -11,6 +11,6 @@ class ItemsTable extends Table
 
     public function initialize(array $config): void
     {
-        $this->addBehavior('ADmad/Sequence.Sequence', ['start' => 0]);
+        $this->addBehavior('ADmad/Sequence.Sequence', ['startAt' => 0]);
     }
 }

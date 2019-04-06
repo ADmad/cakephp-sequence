@@ -37,9 +37,9 @@ You can customize various options as shown:
 
 ```php
 $this->addBehavior('ADmad/Sequence.Sequence', [
-    'order' => 'position', // Field to use to store integer sequence. Default "position".
+    'sequenceField' => 'position', // Field to use to store integer sequence. Default "position".
     'scope' => ['group_id'], // Array of field names to use for grouping records. Default [].
-    'start' => 1, // Initial value for sequence. Default 1.
+    'startAt' => 1, // Initial value for sequence. Default 1.
 ]);
 ```
 

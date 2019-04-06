@@ -9,8 +9,8 @@ class KeywordItemsTable extends Table
     public function initialize(array $config): void
     {
         $this->addBehavior('ADmad/Sequence.Sequence', [
-            'order' => 'order',
-            'start' => 0,
+            'sequenceField' => 'order',
+            'startAt' => 0,
         ]);
     }
 }

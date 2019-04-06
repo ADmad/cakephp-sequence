@@ -9,7 +9,7 @@ class GroupedItemsTable extends Table
     public function initialize(array $config): void
     {
         $this->addBehavior('ADmad/Sequence.Sequence', [
-            'start' => 0,
+            'startAt' => 0,
             'scope' => 'group_field',
         ]);
     }

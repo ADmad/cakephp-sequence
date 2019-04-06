@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files>
+  <file src="src/Model/Behavior/SequenceBehavior.php">
+    <PossiblyInvalidArgument occurrences="2">
+      <code>$previousEntity</code>
+      <code>$this-&gt;_table-&gt;getPrimaryKey()</code>
+    </PossiblyInvalidArgument>
+    <PossiblyInvalidMethodCall occurrences="1">
+      <code>set</code>
+    </PossiblyInvalidMethodCall>
+    <UndefinedInterfaceMethod occurrences="1">
+      <code>getOriginal</code>
+    </UndefinedInterfaceMethod>
+  </file>
+</files>

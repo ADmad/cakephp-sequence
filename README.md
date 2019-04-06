@@ -13,16 +13,10 @@ Install this plugin into your CakePHP application using [composer](http://getcom
 composer require admad/cakephp-sequence
 ```
 
-Then load the plugin by either running:
+Then load the plugin by running CLI command:
 
 ```bash
 ./bin/cake plugin load ADmad/Sequence
-```
-
-or adding the following line to `config/bootstrap.php`:
-
-```php
-\Cake\Core\Plugin::load('ADmad/Sequence');
 ```
 
 ## How it works

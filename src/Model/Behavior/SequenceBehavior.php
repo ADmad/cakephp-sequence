@@ -87,7 +87,7 @@ class SequenceBehavior extends Behavior
      *
      * @return void
      */
-    public function initialize(array $config)
+    public function initialize(array $config): void
     {
         if (!$this->_config['scope']) {
             return;

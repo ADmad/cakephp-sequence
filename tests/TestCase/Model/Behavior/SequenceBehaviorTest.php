@@ -15,7 +15,7 @@ class Item extends Entity
 
 class Items extends Table
 {
-    public function initialize(array $config)
+    public function initialize(array $config): void
     {
         $this->setEntityClass('ADmad\Sequence\Test\TestCase\Model\Behavior\Item');
         $this->addBehavior('ADmad/Sequence.Sequence', ['start' => 0]);
@@ -24,7 +24,7 @@ class Items extends Table
 
 class GroupedItems extends Table
 {
-    public function initialize(array $config)
+    public function initialize(array $config): void
     {
         $this->addBehavior('ADmad/Sequence.Sequence', [
             'start' => 0,
@@ -35,7 +35,7 @@ class GroupedItems extends Table
 
 class KeywordItems extends Table
 {
-    public function initialize(array $config)
+    public function initialize(array $config): void
     {
         $this->addBehavior('ADmad/Sequence.Sequence', [
             'order' => 'order',

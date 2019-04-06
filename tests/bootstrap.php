@@ -1,9 +1,12 @@
 <?php
+declare(strict_types=1);
+/*
+ * Test suite bootstrap for Sequence
+ */
+
 use Cake\Datasource\ConnectionManager;
 
 /*
- * Test suite bootstrap for Sequence
- *
  * This function is used to find the location of CakePHP whether CakePHP
  * has been installed as a dependency of the plugin, or the plugin is itself
  * installed as a dependency of an application.

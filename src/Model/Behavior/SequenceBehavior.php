@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace ADmad\Sequence\Model\Behavior;
 
 use ArrayObject;
@@ -159,7 +160,7 @@ class SequenceBehavior extends Behavior
                 return;
             }
 
-            list($oldOrder, $oldScope) = $this->_getOldValues($entity);
+            [$oldOrder, $oldScope] = $this->_getOldValues($entity);
 
             // No action if new and old scope and order same
             if ($newOrder == $oldOrder &&
@@ -236,7 +237,7 @@ class SequenceBehavior extends Behavior
     public function beforeDelete(Event $event, Entity $entity)
     {
         $orderField = $this->_config['order'];
-        list($order, $scope) = $this->_getOldValues($entity);
+        [$order, $scope] = $this->_getOldValues($entity);
 
         $this->_sync(
             [$orderField => $this->_getUpdateExpression('-')],

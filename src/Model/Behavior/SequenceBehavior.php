@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace ADmad\Sequence\Model\Behavior;
 
 use ArrayObject;

@@ -228,12 +228,12 @@ class SequenceBehavior extends Behavior
      * When you delete a record from a set, you need to decrement the order of all
      * records that were after it in the set.
      *
-     * @param \Cake\Event\Event $event The beforeDelete event that was fired.
+     * @param \Cake\Event\Event $event The afterDelete event that was fired.
      * @param \Cake\ORM\Entity $entity The entity that is going to be saved.
      *
      * @return void
      */
-    public function beforeDelete(Event $event, Entity $entity)
+    public function afterDelete(Event $event, Entity $entity)
     {
         $orderField = $this->_config['order'];
         list($order, $scope) = $this->_getOldValues($entity);

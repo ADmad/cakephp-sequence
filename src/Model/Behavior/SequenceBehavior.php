@@ -74,6 +74,13 @@ class SequenceBehavior extends Behavior
     ];
 
     /**
+     * Old values for the entity being deleted
+     *
+     * @var array|null
+     */
+    protected $_oldValues;
+
+    /**
      * Normalize config options.
      *
      * @param array $config Configuration options include:
@@ -233,16 +240,35 @@ class SequenceBehavior extends Behavior
      *
      * @return void
      */
+    public function beforeDelete(Event $event, Entity $entity)
+    {
+        $this->_oldValues = $this->_getOldValues($entity);
+    }
+
+    /**
+     * When you delete a record from a set, you need to decrement the order of all
+     * records that were after it in the set.
+     *
+     * @param \Cake\Event\Event $event The afterDelete event that was fired.
+     * @param \Cake\ORM\Entity $entity The entity that is going to be saved.
+     *
+     * @return void
+     */
     public function afterDelete(Event $event, Entity $entity)
     {
+        if (!$this->_oldValues) {
+            return null;
+        }
+
         $orderField = $this->_config['order'];
-        list($order, $scope) = $this->_getOldValues($entity);
+        list($order, $scope) = $this->_oldValues;
 
         $this->_sync(
             [$orderField => $this->_getUpdateExpression('-')],
             [$orderField . ' >' => $order],
             $scope
         );
+        $this->_oldValues = null;
     }
 
     /**

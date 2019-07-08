@@ -257,7 +257,7 @@ class SequenceBehavior extends Behavior
     public function afterDelete(Event $event, Entity $entity)
     {
         if (!$this->_oldValues) {
-            return null;
+            return;
         }
 
         $orderField = $this->_config['order'];

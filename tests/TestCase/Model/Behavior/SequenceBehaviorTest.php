@@ -44,12 +44,21 @@ class KeywordItems extends Table
     }
 }
 
+class UniqueItems extends Table
+{
+    public function initialize(array $config)
+    {
+        $this->addBehavior('ADmad/Sequence.Sequence', ['start' => 0]);
+    }
+}
+
 class SequenceTest extends TestCase
 {
     public $fixtures = [
         'plugin.ADmad/Sequence.Items',
         'plugin.ADmad/Sequence.GroupedItems',
         'plugin.ADmad/Sequence.KeywordItems',
+        'plugin.ADmad/Sequence.UniqueItems'
     ];
 
     /**
@@ -241,6 +250,16 @@ class SequenceTest extends TestCase
         $this->assertOrder([1, 2, 4, 5], $GroupedItems, ['group_field' => 1]);
         $this->assertOrder([6, 7, 8, 9, 10], $GroupedItems, ['group_field' => 2]);
         $this->assertOrder([11, 12, 13, 14, 15], $GroupedItems, ['group_field' => 3]);
+
+        $UniqueItems = TableRegistry::get('UniqueItems', [
+            'table' => 'unique_items',
+            'alias' => 'UniqueItems',
+            'className' => 'ADmad\Sequence\Test\TestCase\Model\Behavior\UniqueItems',
+        ]);
+
+        $entity = $UniqueItems->get(3);
+        $UniqueItems->delete($entity);
+        $this->assertOrder([1, 2, 4, 5], $UniqueItems);
     }
 
     /**

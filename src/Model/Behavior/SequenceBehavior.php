@@ -235,7 +235,7 @@ class SequenceBehavior extends Behavior
      * When you delete a record from a set, you need to decrement the order of all
      * records that were after it in the set.
      *
-     * @param \Cake\Event\Event $event The afterDelete event that was fired.
+     * @param \Cake\Event\Event $event The beforeDelete event that was fired.
      * @param \Cake\ORM\Entity $entity The entity that is going to be saved.
      *
      * @return void
@@ -250,7 +250,7 @@ class SequenceBehavior extends Behavior
      * records that were after it in the set.
      *
      * @param \Cake\Event\Event $event The afterDelete event that was fired.
-     * @param \Cake\ORM\Entity $entity The entity that is going to be saved.
+     * @param \Cake\ORM\Entity $entity The entity that has been deleted.
      *
      * @return void
      */

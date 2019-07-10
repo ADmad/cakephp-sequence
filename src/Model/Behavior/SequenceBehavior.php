@@ -235,8 +235,11 @@ class SequenceBehavior extends Behavior
      * When you delete a record from a set, you need to decrement the order of all
      * records that were after it in the set.
      *
+     * This hook just stores all required values from the entity. Actual order
+     * updation is done in "afterDelete" hook.
+     *
      * @param \Cake\Event\Event $event The beforeDelete event that was fired.
-     * @param \Cake\ORM\Entity $entity The entity that is going to be saved.
+     * @param \Cake\ORM\Entity $entity The entity that is going to be deleted.
      *
      * @return void
      */

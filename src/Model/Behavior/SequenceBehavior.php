@@ -284,7 +284,7 @@ class SequenceBehavior extends Behavior
      */
     public function moveUp(EntityInterface $entity)
     {
-        return $this->_movePosition($entity, $direction = '-');
+        return $this->_movePosition($entity, '-');
     }
 
     /**
@@ -297,7 +297,7 @@ class SequenceBehavior extends Behavior
      */
     public function moveDown(EntityInterface $entity)
     {
-        return $this->_movePosition($entity, $direction = '+');
+        return $this->_movePosition($entity, '+');
     }
 
     /**

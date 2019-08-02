@@ -76,6 +76,13 @@ class SequenceBehavior extends Behavior
     ];
 
     /**
+     * Old values for the entity being deleted
+     *
+     * @var array|null
+     */
+    protected $_oldValues;
+
+    /**
      * Normalize config options.
      *
      * @param array $config Configuration options include:
@@ -230,6 +237,9 @@ class SequenceBehavior extends Behavior
      * When you delete a record from a set, you need to decrement the order of all
      * records that were after it in the set.
      *
+     * This hook just stores all required values from the entity. Actual order
+     * updation is done in "afterDelete" hook.
+     *
      * @param \Cake\Event\EventInterface $event The beforeDelete event that was fired.
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved.
      *
@@ -237,14 +247,34 @@ class SequenceBehavior extends Behavior
      */
     public function beforeDelete(EventInterface $event, EntityInterface $entity): void
     {
+        $this->_oldValues = $this->_getOldValues($entity);
+    }
+
+    /**
+     * When you delete a record from a set, you need to decrement the order of all
+     * records that were after it in the set.
+     *
+     * @param \Cake\Event\EventInterface $event The beforeDelete event that was fired.
+     * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved.
+     *
+     * @return void
+     */
+    public function afterDelete(EventInterface $event, EntityInterface $entity)
+    {
+        if (!$this->_oldValues) {
+            return;
+        }
+
         $orderField = $this->_config['sequenceField'];
-        [$order, $scope] = $this->_getOldValues($entity);
+        [$order, $scope] = $this->_oldValues;
 
         $this->_sync(
             [$orderField => $this->_getUpdateExpression('-')],
             [$orderField . ' >' => $order],
             $scope
         );
+
+        $this->_oldValues = null;
     }
 
     /**
@@ -257,7 +287,7 @@ class SequenceBehavior extends Behavior
      */
     public function moveUp(EntityInterface $entity)
     {
-        return $this->_movePosition($entity, $direction = '-');
+        return $this->_movePosition($entity, '-');
     }
 
     /**
@@ -270,7 +300,7 @@ class SequenceBehavior extends Behavior
      */
     public function moveDown(EntityInterface $entity)
     {
-        return $this->_movePosition($entity, $direction = '+');
+        return $this->_movePosition($entity, '+');
     }
 
     /**

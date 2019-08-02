@@ -9,6 +9,7 @@ use Cake\TestSuite\TestCase;
 use TestApp\Model\Table\GroupedItemsTable;
 use TestApp\Model\Table\ItemsTable;
 use TestApp\Model\Table\KeywordItemsTable;
+use TestApp\Model\Table\UniqueItemsTable;
 
 class SequenceBehaviorTest extends TestCase
 {
@@ -18,6 +19,7 @@ class SequenceBehaviorTest extends TestCase
         'plugin.ADmad/Sequence.Items',
         'plugin.ADmad/Sequence.GroupedItems',
         'plugin.ADmad/Sequence.KeywordItems',
+        'plugin.ADmad/Sequence.UniqueItems',
     ];
 
     /**
@@ -209,6 +211,16 @@ class SequenceBehaviorTest extends TestCase
         $this->assertOrder([1, 2, 4, 5], $GroupedItems, ['group_field' => 1]);
         $this->assertOrder([6, 7, 8, 9, 10], $GroupedItems, ['group_field' => 2]);
         $this->assertOrder([11, 12, 13, 14, 15], $GroupedItems, ['group_field' => 3]);
+
+        $UniqueItems = $this->getTableLocator()->get('UniqueItems', [
+            'table' => 'unique_items',
+            'alias' => 'UniqueItems',
+            'className' => UniqueItemsTable::class,
+        ]);
+
+        $entity = $UniqueItems->get(3);
+        $UniqueItems->delete($entity);
+        $this->assertOrder([1, 2, 4, 5], $UniqueItems);
     }
 
     /**

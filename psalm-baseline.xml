@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files>
+<files psalm-version="3.7.2@d9cae720c1af31db9ba27c2bc1fcf9b0dd092fb0">
   <file src="src/Model/Behavior/SequenceBehavior.php">
     <PossiblyInvalidArgument occurrences="2">
       <code>$previousEntity</code>
@@ -8,8 +8,5 @@
     <PossiblyInvalidMethodCall occurrences="1">
       <code>set</code>
     </PossiblyInvalidMethodCall>
-    <UndefinedInterfaceMethod occurrences="1">
-      <code>getOriginal</code>
-    </UndefinedInterfaceMethod>
   </file>
 </files>

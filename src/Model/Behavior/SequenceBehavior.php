@@ -407,7 +407,7 @@ class SequenceBehavior extends Behavior
                                 $primaryKeyField => true,
                             ],
                         ]);
-                        $record->isNew(false);
+                        $record->setNew(false);
                         $record->setDirty($primaryKeyField, false);
                     }
 

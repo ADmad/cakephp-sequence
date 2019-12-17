@@ -196,7 +196,7 @@ class SequenceBehaviorTest extends TestCase
         $this->assertOrder([1, 2, 4, 5], $Items);
 
         $entity = new Entity(['id' => 4]);
-        $entity->isNew(false);
+        $entity->setNew(false);
         $Items->delete($entity);
         $this->assertOrder([1, 2, 5], $Items);
 
@@ -265,7 +265,7 @@ class SequenceBehaviorTest extends TestCase
             ['accessibleFields' => ['id' => true]]
         );
         foreach ($entities as &$entity) {
-            $entity->isNew(false);
+            $entity->setNew(false);
         }
         $result = $Items->setOrder($entities);
         $this->assertTrue($result);

@@ -3,10 +3,15 @@ language: php
 php:
   - 7.2
   - 7.3
+  - 7.4
+
+services:
+  - mysql
+  - postgresql
 
 env:
   matrix:
-    - DB=mysql db_dsn='mysql://travis@0.0.0.0/cakephp_test'
+    - DB=mysql db_dsn='mysql://root@127.0.0.1/cakephp_test'
     - DB=pgsql db_dsn='postgres://postgres@127.0.0.1/cakephp_test'
     - DB=sqlite db_dsn='sqlite:///:memory:'
 
@@ -27,7 +32,7 @@ matrix:
       env: PREFER_LOWEST=1
 
 before_script:
-  - if [[ $TRAVIS_PHP_VERSION != 7.2 ]]; then phpenv config-rm xdebug.ini; fi
+  - phpenv config-rm xdebug.ini
 
   - if [[ $PREFER_LOWEST != 1 ]]; then composer update --no-interaction; fi
   - if [[ $PREFER_LOWEST == 1 ]]; then composer update --no-interaction --prefer-lowest --prefer-stable; fi
@@ -35,7 +40,7 @@ before_script:
   - if [[ $DB = 'mysql' ]]; then mysql -e 'CREATE DATABASE cakephp_test;'; fi
   - if [[ $DB = 'pgsql' ]]; then psql -c 'CREATE DATABASE cakephp_test;' -U postgres; fi
 
-  - if [[ $PHPCS = 1 ]]; then composer require cakephp/cakephp-codesniffer:dev-next; fi
+  - if [[ $PHPCS = 1 ]]; then composer require cakephp/cakephp-codesniffer:^4.0; fi
 
 script:
   - |
@@ -47,7 +52,7 @@ script:
 
   - if [[ $PHPCS = 1 ]]; then vendor/bin/phpcs -p --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src ./tests; fi
 
-  - if [[ $STATIC_ANALYSIS = 1 ]]; then composer require --dev vimeo/psalm:^3.2 && vendor/bin/psalm src; fi
+  - if [[ $STATIC_ANALYSIS = 1 ]]; then composer require --dev psalm/phar:^3.7 && vendor/bin/psalm.phar src; fi
 
 after_success:
   - |

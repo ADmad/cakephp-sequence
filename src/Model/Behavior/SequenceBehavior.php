@@ -171,7 +171,8 @@ class SequenceBehavior extends Behavior
             [$oldOrder, $oldScope] = $this->_getOldValues($entity);
 
             // No action if new and old scope and order same
-            if ($newOrder == $oldOrder &&
+            if (
+                $newOrder == $oldOrder &&
                 $newScope == $oldScope
             ) {
                 return;

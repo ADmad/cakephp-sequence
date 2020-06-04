@@ -69,6 +69,7 @@ class SequenceBehavior extends Behavior
      */
     protected $_defaultConfig = [
         'sequenceField' => 'position',
+        'sortField' => null,
         'scope' => [],
         'startAt' => 1,
     ];
@@ -86,6 +87,9 @@ class SequenceBehavior extends Behavior
      * @param array $config Configuration options include:
      * - sequenceField : The field name that stores the sequence number.
      *   Defaults is "position".
+     * - sortField : The field name to use for sorting in order to determine
+     *   the next value for the sequence.
+     *   Defaults to `null`, in which case the sequenceField is used.
      * - scope : Array of field names that identify a single group of records
      *   that need to form a contiguous sequence.
      *   Default is empty array, i.e. no scope fields.
@@ -115,7 +119,8 @@ class SequenceBehavior extends Behavior
     public function beforeFind(EventInterface $event, Query $query, ArrayObject $options): void
     {
         if (!$query->clause('order')) {
-            $query->order([$this->_table->aliasField($this->_config['sequenceField']) => 'ASC']);
+            $sortField = $this->getConfig('sortField', $this->_config['sequenceField']);
+            $query->order([$this->_table->aliasField($sortField) => 'ASC']);
         }
     }
 
@@ -498,12 +503,13 @@ class SequenceBehavior extends Behavior
     protected function _getHighestOrder(array $scope = []): int
     {
         $orderField = $this->_config['sequenceField'];
+        $sortField = $this->getConfig('sortField', $this->_config['sequenceField']);
 
         // Find the last record in the set
         $last = $this->_table->find()
             ->select([$orderField])
             ->where($scope)
-            ->order([$orderField => 'DESC'])
+            ->order([$sortField => 'DESC'])
             ->limit(1)
             ->enableHydration(false)
             ->first();

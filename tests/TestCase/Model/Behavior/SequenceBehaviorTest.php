@@ -58,7 +58,7 @@ class SequenceTest extends TestCase
         'plugin.ADmad/Sequence.Items',
         'plugin.ADmad/Sequence.GroupedItems',
         'plugin.ADmad/Sequence.KeywordItems',
-        'plugin.ADmad/Sequence.UniqueItems'
+        'plugin.ADmad/Sequence.UniqueItems',
     ];
 
     /**
@@ -423,7 +423,6 @@ class SequenceTest extends TestCase
      * @param array $expected
      * @param \Cake\ORM\Table $table
      * @param \Cake\ORM\Query $query
-     *
      * @return bool
      */
     public function assertOrder($expected, $table, $query = null)

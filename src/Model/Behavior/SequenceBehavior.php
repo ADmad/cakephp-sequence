@@ -56,10 +56,8 @@ use Cake\ORM\Query;
  * Inspired by Neil Crooke's Sequence behavior for CakePHP 1.3. Above description
  * has been "borrowed" from it :).
  *
- * @copyright 2015 A. Sarela, aka ADmad
- *
+ * @copyright 2015-Present ADmad
  * @link https://github.com/ADmad/cakephp-sequence
- *
  * @license MIT License - http://www.opensource.org/licenses/mit-license.php
  */
 class SequenceBehavior extends Behavior
@@ -93,7 +91,6 @@ class SequenceBehavior extends Behavior
      *   Default is empty array, i.e. no scope fields.
      * - startAt : You can start your sequence numbers at 0 or 1 or any other.
      *   Defaults is 1.
-     *
      * @return void
      */
     public function initialize(array $config): void
@@ -113,7 +110,6 @@ class SequenceBehavior extends Behavior
      * @param \Cake\Event\EventInterface $event The beforeFind event that was fired.
      * @param \Cake\ORM\Query $query The query object.
      * @param \ArrayObject $options The options passed to the find method.
-     *
      * @return void
      */
     public function beforeFind(EventInterface $event, Query $query, ArrayObject $options): void
@@ -129,7 +125,6 @@ class SequenceBehavior extends Behavior
      * @param \Cake\Event\EventInterface $event The beforeSave event that was fired.
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved.
      * @param \ArrayObject $options The options passed to the save method.
-     *
      * @return void
      */
     public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
@@ -243,7 +238,6 @@ class SequenceBehavior extends Behavior
      *
      * @param \Cake\Event\EventInterface $event The beforeDelete event that was fired.
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved.
-     *
      * @return void
      */
     public function beforeDelete(EventInterface $event, EntityInterface $entity): void
@@ -257,7 +251,6 @@ class SequenceBehavior extends Behavior
      *
      * @param \Cake\Event\EventInterface $event The beforeDelete event that was fired.
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved.
-     *
      * @return void
      */
     public function afterDelete(EventInterface $event, EntityInterface $entity)
@@ -312,7 +305,6 @@ class SequenceBehavior extends Behavior
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved.
      * @param string $direction Whether to increment or decrement the field.
-     *
      * @return bool
      */
     protected function _movePosition(EntityInterface $entity, string $direction = '+'): bool
@@ -378,7 +370,6 @@ class SequenceBehavior extends Behavior
      * like `[1, 2]`.
      *
      * @param array $records Records.
-     *
      * @return bool
      */
     public function setOrder(array $records): bool
@@ -437,7 +428,6 @@ class SequenceBehavior extends Behavior
      * Get old order and scope values.
      *
      * @param \Cake\Datasource\EntityInterface $entity Entity.
-     *
      * @return array
      */
     protected function _getOldValues(EntityInterface $entity): array
@@ -470,7 +460,6 @@ class SequenceBehavior extends Behavior
      * Get scope values.
      *
      * @param \Cake\Datasource\EntityInterface $entity Entity.
-     *
      * @return array|false
      */
     protected function _getScope(EntityInterface $entity)
@@ -504,7 +493,6 @@ class SequenceBehavior extends Behavior
      * one.
      *
      * @param array $scope Array with scope field => scope values, used for conditions.
-     *
      * @return int Value of order field of last record in set
      */
     protected function _getHighestOrder(array $scope = []): int
@@ -536,7 +524,6 @@ class SequenceBehavior extends Behavior
      * @param array $fields Fields to update.
      * @param array $conditions Conditions for matching rows.
      * @param array $scope Grouping scope that will be added to coditions.
-     *
      * @return int Count of rows updated.
      */
     protected function _sync(array $fields, array $conditions, ?array $scope = null): int
@@ -552,7 +539,6 @@ class SequenceBehavior extends Behavior
      * Returns the update expression for the order field.
      *
      * @param string $direction Whether to increment or decrement the field.
-     *
      * @return \Cake\Database\Expression\QueryExpression QueryExpression to modify the order field
      */
     protected function _getUpdateExpression(string $direction = '+'): QueryExpression

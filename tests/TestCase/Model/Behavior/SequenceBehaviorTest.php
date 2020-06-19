@@ -384,7 +384,6 @@ class SequenceBehaviorTest extends TestCase
      * @param array $expected
      * @param \Cake\ORM\Table $table
      * @param \Cake\ORM\Query $query
-     *
      * @return bool
      */
     public function assertOrder($expected, $table, $query = null)

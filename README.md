@@ -13,16 +13,10 @@ Install this plugin into your CakePHP application using [composer](http://getcom
 composer require admad/cakephp-sequence
 ```
 
-Then load the plugin by either running:
+Then load the plugin by running CLI command:
 
 ```bash
 ./bin/cake plugin load ADmad/Sequence
-```
-
-or adding the following line to `config/bootstrap.php`:
-
-```php
-\Cake\Core\Plugin::load('ADmad/Sequence');
 ```
 
 ## How it works
@@ -43,9 +37,9 @@ You can customize various options as shown:
 
 ```php
 $this->addBehavior('ADmad/Sequence.Sequence', [
-    'order' => 'position', // Field to use to store integer sequence. Default "position".
+    'sequenceField' => 'position', // Field to use to store integer sequence. Default "position".
     'scope' => ['group_id'], // Array of field names to use for grouping records. Default [].
-    'start' => 1, // Initial value for sequence. Default 1.
+    'startAt' => 1, // Initial value for sequence. Default 1.
 ]);
 ```
 

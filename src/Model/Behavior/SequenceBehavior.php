@@ -1,12 +1,14 @@
 <?php
+declare(strict_types=1);
+
 namespace ADmad\Sequence\Model\Behavior;
 
 use ArrayObject;
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\EntityInterface;
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\ORM\Behavior;
-use Cake\ORM\Entity;
 use Cake\ORM\Query;
 
 /**
@@ -66,9 +68,9 @@ class SequenceBehavior extends Behavior
      * @var array
      */
     protected $_defaultConfig = [
-        'order' => 'position',
+        'sequenceField' => 'position',
         'scope' => [],
-        'start' => 1,
+        'startAt' => 1,
     ];
 
     /**
@@ -82,16 +84,16 @@ class SequenceBehavior extends Behavior
      * Normalize config options.
      *
      * @param array $config Configuration options include:
-     * - order : The field name that stores the sequence number.
+     * - sequenceField : The field name that stores the sequence number.
      *   Defaults is "position".
      * - scope : Array of field names that identify a single group of records
      *   that need to form a contiguous sequence.
      *   Default is empty array, i.e. no scope fields.
-     * - start : You can start your sequence numbers at 0 or 1 or any other.
+     * - startAt : You can start your sequence numbers at 0 or 1 or any other.
      *   Defaults is 1.
      * @return void
      */
-    public function initialize(array $config)
+    public function initialize(array $config): void
     {
         if (!$this->_config['scope']) {
             return;
@@ -105,27 +107,27 @@ class SequenceBehavior extends Behavior
     /**
      * Adds order value if not already set in query.
      *
-     * @param \Cake\Event\Event $event The beforeFind event that was fired.
+     * @param \Cake\Event\EventInterface $event The beforeFind event that was fired.
      * @param \Cake\ORM\Query $query The query object.
      * @param \ArrayObject $options The options passed to the find method.
      * @return void
      */
-    public function beforeFind(Event $event, Query $query, ArrayObject $options)
+    public function beforeFind(EventInterface $event, Query $query, ArrayObject $options): void
     {
         if (!$query->clause('order')) {
-            $query->order([$this->_table->aliasField($this->_config['order']) => 'ASC']);
+            $query->order([$this->_table->aliasField($this->_config['sequenceField']) => 'ASC']);
         }
     }
 
     /**
      * Sets entity's order and updates order of other records when necessary.
      *
-     * @param \Cake\Event\Event $event The beforeSave event that was fired.
-     * @param \Cake\ORM\Entity $entity The entity that is going to be saved.
+     * @param \Cake\Event\EventInterface $event The beforeSave event that was fired.
+     * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved.
      * @param \ArrayObject $options The options passed to the save method.
      * @return void
      */
-    public function beforeSave(Event $event, Entity $entity, ArrayObject $options)
+    public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
     {
         $config = $this->getConfig();
 
@@ -135,7 +137,7 @@ class SequenceBehavior extends Behavior
             return;
         }
 
-        $orderField = $config['order'];
+        $orderField = $config['sequenceField'];
         $newOrder = $entity->get($orderField);
 
         // Adding
@@ -161,7 +163,7 @@ class SequenceBehavior extends Behavior
                 return;
             }
 
-            list($oldOrder, $oldScope) = $this->_getOldValues($entity);
+            [$oldOrder, $oldScope] = $this->_getOldValues($entity);
 
             // No action if new and old scope and order same
             if (
@@ -234,11 +236,11 @@ class SequenceBehavior extends Behavior
      * This hook just stores all required values from the entity. Actual order
      * updation is done in "afterDelete" hook.
      *
-     * @param \Cake\Event\Event $event The beforeDelete event that was fired.
-     * @param \Cake\ORM\Entity $entity The entity that is going to be deleted.
+     * @param \Cake\Event\EventInterface $event The beforeDelete event that was fired.
+     * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved.
      * @return void
      */
-    public function beforeDelete(Event $event, Entity $entity)
+    public function beforeDelete(EventInterface $event, EntityInterface $entity): void
     {
         $this->_oldValues = $this->_getOldValues($entity);
     }
@@ -247,24 +249,25 @@ class SequenceBehavior extends Behavior
      * When you delete a record from a set, you need to decrement the order of all
      * records that were after it in the set.
      *
-     * @param \Cake\Event\Event $event The afterDelete event that was fired.
-     * @param \Cake\ORM\Entity $entity The entity that has been deleted.
+     * @param \Cake\Event\EventInterface $event The beforeDelete event that was fired.
+     * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved.
      * @return void
      */
-    public function afterDelete(Event $event, Entity $entity)
+    public function afterDelete(EventInterface $event, EntityInterface $entity)
     {
         if (!$this->_oldValues) {
             return;
         }
 
-        $orderField = $this->_config['order'];
-        list($order, $scope) = $this->_oldValues;
+        $orderField = $this->_config['sequenceField'];
+        [$order, $scope] = $this->_oldValues;
 
         $this->_sync(
             [$orderField => $this->_getUpdateExpression('-')],
             [$orderField . ' >' => $order],
             $scope
         );
+
         $this->_oldValues = null;
     }
 
@@ -304,7 +307,7 @@ class SequenceBehavior extends Behavior
      * @param string $direction Whether to increment or decrement the field.
      * @return bool
      */
-    protected function _movePosition(EntityInterface $entity, $direction = '+')
+    protected function _movePosition(EntityInterface $entity, string $direction = '+'): bool
     {
         if ($entity->isNew()) {
             return false;
@@ -322,9 +325,9 @@ class SequenceBehavior extends Behavior
 
         $return = $table->getConnection()->transactional(
             function ($connection) use ($table, $entity, $config, $scope, $direction) {
-                $orderField = $config['order'];
+                $orderField = $config['sequenceField'];
                 // Nothing to do if trying to move up entity already at first position
-                if ($direction === '-' && $entity->get($orderField) === $config['start']) {
+                if ($direction === '-' && $entity->get($orderField) === $config['startAt']) {
                     return true;
                 }
 
@@ -369,7 +372,7 @@ class SequenceBehavior extends Behavior
      * @param array $records Records.
      * @return bool
      */
-    public function setOrder(array $records)
+    public function setOrder(array $records): bool
     {
         $config = $this->getConfig();
         $table = $this->_table;
@@ -378,8 +381,8 @@ class SequenceBehavior extends Behavior
 
         $return = $table->getConnection()->transactional(
             function ($connection) use ($table, $records) {
-                $order = $this->_config['start'];
-                $field = $this->_config['order'];
+                $order = $this->_config['startAt'];
+                $field = $this->_config['sequenceField'];
 
                 /** @var string $primaryKeyField */
                 $primaryKeyField = $table->getPrimaryKey();
@@ -396,7 +399,7 @@ class SequenceBehavior extends Behavior
                                 $primaryKeyField => true,
                             ],
                         ]);
-                        $record->isNew(false);
+                        $record->setNew(false);
                         $record->setDirty($primaryKeyField, false);
                     }
 
@@ -424,13 +427,13 @@ class SequenceBehavior extends Behavior
     /**
      * Get old order and scope values.
      *
-     * @param \Cake\ORM\Entity $entity Entity.
+     * @param \Cake\Datasource\EntityInterface $entity Entity.
      * @return array
      */
-    protected function _getOldValues(Entity $entity)
+    protected function _getOldValues(EntityInterface $entity): array
     {
         $config = $this->getConfig();
-        $fields = array_merge($config['scope'], [$config['order']]);
+        $fields = array_merge($config['scope'], [$config['sequenceField']]);
 
         $values = [];
         foreach ($fields as $field) {
@@ -447,8 +450,8 @@ class SequenceBehavior extends Behavior
             $values = $entity->extract($fields);
         }
 
-        $order = $values[$config['order']];
-        unset($values[$config['order']]);
+        $order = $values[$config['sequenceField']];
+        unset($values[$config['sequenceField']]);
 
         return [$order, $values];
     }
@@ -457,7 +460,7 @@ class SequenceBehavior extends Behavior
      * Get scope values.
      *
      * @param \Cake\Datasource\EntityInterface $entity Entity.
-     * @return array|bool
+     * @return array|false
      */
     protected function _getScope(EntityInterface $entity)
     {
@@ -492,9 +495,9 @@ class SequenceBehavior extends Behavior
      * @param array $scope Array with scope field => scope values, used for conditions.
      * @return int Value of order field of last record in set
      */
-    protected function _getHighestOrder(array $scope = [])
+    protected function _getHighestOrder(array $scope = []): int
     {
-        $orderField = $this->_config['order'];
+        $orderField = $this->_config['sequenceField'];
 
         // Find the last record in the set
         $last = $this->_table->find()
@@ -511,7 +514,7 @@ class SequenceBehavior extends Behavior
         }
 
         // If there isn't any records in the set, return the start number minus 1
-        return (int)$this->_config['start'] - 1;
+        return (int)$this->_config['startAt'] - 1;
     }
 
     /**
@@ -523,7 +526,7 @@ class SequenceBehavior extends Behavior
      * @param array $scope Grouping scope that will be added to coditions.
      * @return int Count of rows updated.
      */
-    protected function _sync($fields, $conditions, $scope = null)
+    protected function _sync(array $fields, array $conditions, ?array $scope = null): int
     {
         if ($scope) {
             $conditions = array_merge($conditions, $scope);
@@ -538,9 +541,9 @@ class SequenceBehavior extends Behavior
      * @param string $direction Whether to increment or decrement the field.
      * @return \Cake\Database\Expression\QueryExpression QueryExpression to modify the order field
      */
-    protected function _getUpdateExpression($direction = '+')
+    protected function _getUpdateExpression(string $direction = '+'): QueryExpression
     {
-        $field = $this->_config['order'];
+        $field = $this->_config['sequenceField'];
 
         return $this->_table->query()->newExpr()
             ->add(new IdentifierExpression($field))

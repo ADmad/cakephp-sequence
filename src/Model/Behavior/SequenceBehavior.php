@@ -453,6 +453,13 @@ class SequenceBehavior extends Behavior
         $order = $values[$config['sequenceField']];
         unset($values[$config['sequenceField']]);
 
+        foreach ($values as $field => $value) {
+            if (is_null($value)) {
+                $values[$field . ' IS'] = $value;
+                unset($values[$field]);
+            }
+        }
+
         return [$order, $values];
     }
 

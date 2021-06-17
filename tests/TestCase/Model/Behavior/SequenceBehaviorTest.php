@@ -159,6 +159,14 @@ class SequenceBehaviorTest extends TestCase
         $this->assertOrder([1, 4, 3, 5], $GroupedItems, ['group_field' => 1]);
         $this->assertOrder([6, 2, 7, 8, 17, 9, 10, 16], $GroupedItems, ['group_field IS' => null]);
         $this->assertOrder([11, 12, 13, 14, 15], $GroupedItems, ['group_field' => 3]);
+
+        // Test editing record with scope null
+        $entity = $GroupedItems->get(8);
+        $entity->position = 5;
+        $entity = $GroupedItems->save($entity);
+        $this->assertOrder([1, 4, 3, 5], $GroupedItems, ['group_field' => 1]);
+        $this->assertOrder([6, 2, 7, 17, 9, 8, 10, 16], $GroupedItems, ['group_field IS' => null]);
+        $this->assertOrder([11, 12, 13, 14, 15], $GroupedItems, ['group_field' => 3]);
     }
 
     /**

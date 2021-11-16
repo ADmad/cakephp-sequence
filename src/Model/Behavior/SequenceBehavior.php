@@ -65,7 +65,7 @@ class SequenceBehavior extends Behavior
     /**
      * Default settings.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'sequenceField' => 'position',
@@ -83,7 +83,7 @@ class SequenceBehavior extends Behavior
     /**
      * Normalize config options.
      *
-     * @param array $config Configuration options include:
+     * @param array<string, mixed> $config Configuration options include:
      * - sequenceField : The field name that stores the sequence number.
      *   Defaults is "position".
      * - scope : Array of field names that identify a single group of records
@@ -109,7 +109,7 @@ class SequenceBehavior extends Behavior
      *
      * @param \Cake\Event\EventInterface $event The beforeFind event that was fired.
      * @param \Cake\ORM\Query $query The query object.
-     * @param \ArrayObject $options The options passed to the find method.
+     * @param \ArrayObject<string, mixed> $options The options passed to the find method.
      * @return void
      */
     public function beforeFind(EventInterface $event, Query $query, ArrayObject $options): void
@@ -124,14 +124,13 @@ class SequenceBehavior extends Behavior
      *
      * @param \Cake\Event\EventInterface $event The beforeSave event that was fired.
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved.
-     * @param \ArrayObject $options The options passed to the save method.
+     * @param \ArrayObject<string, mixed> $options The options passed to the save method.
      * @return void
      */
     public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
     {
         $config = $this->getConfig();
 
-        $newOrder = null;
         $newScope = $this->_getScope($entity);
         if ($newScope === false) {
             return;
@@ -337,11 +336,12 @@ class SequenceBehavior extends Behavior
                     $newOrder = $entity->get($orderField) + 1;
                 }
 
+                /** @var \Cake\Datasource\EntityInterface|null $previousEntity */
                 $previousEntity = $table->find()
                     ->where(array_merge($scope, [$orderField => $newOrder]))
                     ->first();
 
-                if (!empty($previousEntity)) {
+                if ($previousEntity !== null) {
                     $previousEntity->set($orderField, $oldOrder);
                     if (!$table->save($previousEntity, ['atomic' => false, 'checkRules' => false])) {
                         return false;
@@ -444,8 +444,10 @@ class SequenceBehavior extends Behavior
             }
         }
 
-        if (count($fields) != count($values)) {
-            $primaryKey = $entity->get($this->_table->getPrimaryKey());
+        if (count($fields) !== count($values)) {
+            /** @var string $primaryKeyField */
+            $primaryKeyField = $this->_table->getPrimaryKey();
+            $primaryKey = $entity->get($primaryKeyField);
             $entity = $this->_table->get($primaryKey, ['fields' => $fields]);
             $values = $entity->extract($fields);
         }

@@ -2,7 +2,7 @@ language: php
 
 php:
   - 7.2
-  - 7.4
+  - 8.0
 
 services:
   - mysql
@@ -49,9 +49,9 @@ script:
       fi
   - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION != 7.2 ]]; then vendor/bin/phpunit; fi
 
-  - if [[ $PHPCS = 1 ]]; then vendor/bin/phpcs -p --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src ./tests; fi
+  - if [[ $PHPCS = 1 ]]; then vendor/bin/phpcs -p --standard=vendor/cakephp/cakephp-codesniffer/CakePHP src/ tests/; fi
 
-  - if [[ $STATIC_ANALYSIS = 1 ]]; then composer require --dev psalm/phar:^3.7 && vendor/bin/psalm.phar src; fi
+  - if [[ $STATIC_ANALYSIS = 1 ]]; then composer require --dev psalm/phar:^3.7 && vendor/bin/psalm.phar src/; fi
 
 after_success:
   - |

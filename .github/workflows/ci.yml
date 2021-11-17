@@ -98,4 +98,4 @@ jobs:
 
     - name: Run phpstan
       if: success() || failure()
-      run: phpstan analyse src
+      run: phpstan

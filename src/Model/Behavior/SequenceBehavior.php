@@ -129,15 +129,12 @@ class SequenceBehavior extends Behavior
      */
     public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
     {
-        $config = $this->getConfig();
-
-        $newOrder = null;
         $newScope = $this->_getScope($entity);
         if ($newScope === false) {
             return;
         }
 
-        $orderField = $config['sequenceField'];
+        $orderField = $this->getConfig('sequenceField');
         $newOrder = $entity->get($orderField);
 
         // Adding

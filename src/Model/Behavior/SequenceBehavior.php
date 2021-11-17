@@ -337,11 +337,12 @@ class SequenceBehavior extends Behavior
                     $newOrder = $entity->get($orderField) + 1;
                 }
 
+                /** @var \Cake\Datasource\EntityInterface|null $previousEntity */
                 $previousEntity = $table->find()
                     ->where(array_merge($scope, [$orderField => $newOrder]))
                     ->first();
 
-                if (!empty($previousEntity)) {
+                if ($previousEntity !== null) {
                     $previousEntity->set($orderField, $oldOrder);
                     if (!$table->save($previousEntity, ['atomic' => false, 'checkRules' => false])) {
                         return false;
@@ -445,6 +446,7 @@ class SequenceBehavior extends Behavior
         }
 
         if (count($fields) != count($values)) {
+            /** @psalm-suppress PossiblyInvalidArgument */
             $primaryKey = $entity->get($this->_table->getPrimaryKey());
             $entity = $this->_table->get($primaryKey, ['fields' => $fields]);
             $values = $entity->extract($fields);

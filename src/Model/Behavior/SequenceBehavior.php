@@ -65,7 +65,7 @@ class SequenceBehavior extends Behavior
     /**
      * Default settings.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $_defaultConfig = [
         'sequenceField' => 'position',
@@ -109,7 +109,7 @@ class SequenceBehavior extends Behavior
      *
      * @param \Cake\Event\EventInterface $event The beforeFind event that was fired.
      * @param \Cake\ORM\Query $query The query object.
-     * @param \ArrayObject $options The options passed to the find method.
+     * @param \ArrayObject<string, mixed> $options The options passed to the find method.
      * @return void
      */
     public function beforeFind(EventInterface $event, Query $query, ArrayObject $options): void
@@ -124,7 +124,7 @@ class SequenceBehavior extends Behavior
      *
      * @param \Cake\Event\EventInterface $event The beforeSave event that was fired.
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved.
-     * @param \ArrayObject $options The options passed to the save method.
+     * @param \ArrayObject<string, mixed> $options The options passed to the save method.
      * @return void
      */
     public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
@@ -446,7 +446,10 @@ class SequenceBehavior extends Behavior
         }
 
         if (count($fields) != count($values)) {
-            /** @psalm-suppress PossiblyInvalidArgument */
+            /**
+             * @psalm-suppress PossiblyInvalidArgument
+             * @phpstan-ignore-next-line
+             */
             $primaryKey = $entity->get($this->_table->getPrimaryKey());
             $entity = $this->_table->get($primaryKey, ['fields' => $fields]);
             $values = $entity->extract($fields);

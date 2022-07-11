@@ -7,7 +7,7 @@ use Cake\ORM\Entity;
 
 class Item extends Entity
 {
-    protected $_accessible = ['*' => true, 'id' => false];
+    protected array $_accessible = ['*' => true, 'id' => false];
 
-    protected $_virtual = ['virutal_name'];
+    protected array $_virtual = ['virutal_name'];
 }

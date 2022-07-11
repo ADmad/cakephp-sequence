@@ -5,25 +5,7 @@ use Cake\TestSuite\Fixture\TestFixture;
 
 class GroupedItemsFixture extends TestFixture
 {
-    /**
-     * fields property.
-     *
-     * @var array
-     */
-    public $fields = [
-        'id' => ['type' => 'integer'],
-        'name' => ['type' => 'string', 'null' => true],
-        'group_field' => ['type' => 'integer', 'null' => true],
-        'position' => ['type' => 'integer', 'null' => true],
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
-    ];
-
-    /**
-     * records property.
-     *
-     * @var array
-     */
-    public $records = [
+    public array $records = [
         ['name' => 'Group 1 Item A', 'group_field' => 1, 'position' => 0],
         ['name' => 'Group 1 Item B', 'group_field' => 1, 'position' => 1],
         ['name' => 'Group 1 Item C', 'group_field' => 1, 'position' => 2],

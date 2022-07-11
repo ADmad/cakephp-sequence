@@ -5,7 +5,6 @@ declare(strict_types=1);
  * Test suite bootstrap for Sequence
  */
 
-use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
 
 /*
@@ -37,7 +36,3 @@ if (file_exists($root . '/config/bootstrap.php')) {
 require dirname(__DIR__) . '/vendor/cakephp/cakephp/tests/bootstrap.php';
 
 ConnectionManager::get('test')->getDriver()->enableAutoQuoting(true);
-
-Configure::write('Error.ignoredDeprecationPaths', [
-    'src/TestSuite/Fixture/FixtureInjector.php',
-]);

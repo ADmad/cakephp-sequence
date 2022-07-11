@@ -67,7 +67,7 @@ class SequenceBehavior extends Behavior
      *
      * @var array<string, mixed>
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'sequenceField' => 'position',
         'scope' => [],
         'startAt' => 1,
@@ -78,7 +78,7 @@ class SequenceBehavior extends Behavior
      *
      * @var array|null
      */
-    protected $_oldValues;
+    protected ?array $_oldValues = null;
 
     /**
      * Normalize config options.
@@ -250,7 +250,7 @@ class SequenceBehavior extends Behavior
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved.
      * @return void
      */
-    public function afterDelete(EventInterface $event, EntityInterface $entity)
+    public function afterDelete(EventInterface $event, EntityInterface $entity): void
     {
         if (!$this->_oldValues) {
             return;
@@ -276,7 +276,7 @@ class SequenceBehavior extends Behavior
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved.
      * @return bool
      */
-    public function moveUp(EntityInterface $entity)
+    public function moveUp(EntityInterface $entity): bool
     {
         return $this->_movePosition($entity, '-');
     }
@@ -289,7 +289,7 @@ class SequenceBehavior extends Behavior
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved.
      * @return bool
      */
-    public function moveDown(EntityInterface $entity)
+    public function moveDown(EntityInterface $entity): bool
     {
         return $this->_movePosition($entity, '+');
     }
@@ -471,7 +471,7 @@ class SequenceBehavior extends Behavior
      * @param \Cake\Datasource\EntityInterface $entity Entity.
      * @return array|false
      */
-    protected function _getScope(EntityInterface $entity)
+    protected function _getScope(EntityInterface $entity): array|false
     {
         $scope = [];
         $config = $this->getConfig();
@@ -504,7 +504,7 @@ class SequenceBehavior extends Behavior
      * @param array $scope Array with scope field => scope values, used for conditions.
      * @return int Value of order field of last record in set
      */
-    protected function _getHighestOrder(array $scope = []): int
+    protected function _getHighestOrder(array $scope): int
     {
         $orderField = $this->_config['sequenceField'];
 

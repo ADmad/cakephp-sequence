@@ -406,7 +406,7 @@ class SequenceBehaviorTest extends TestCase
 
         $records = $query->find('list', ['keyField' => $order, 'valueField' => 'id'])
             ->where($conditions)
-            ->order([$order => 'ASC'])
+            ->orderBy([$order => 'ASC'])
             ->toArray();
 
         return $this->assertSame($expected, $records);

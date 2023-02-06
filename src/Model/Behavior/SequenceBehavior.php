@@ -108,7 +108,7 @@ class SequenceBehavior extends Behavior
      * Adds order value if not already set in query.
      *
      * @param \Cake\Event\EventInterface $event The beforeFind event that was fired.
-     * @param \Cake\ORM\Query $query The query object.
+     * @param \Cake\ORM\Query\SelectQuery $query The query object.
      * @param \ArrayObject<string, mixed> $options The options passed to the find method.
      * @return void
      */

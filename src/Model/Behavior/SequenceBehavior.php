@@ -9,7 +9,7 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\ORM\Behavior;
-use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
 
 /**
  * SequenceBehavior maintains a contiguous sequence of integers (starting at 1
@@ -112,10 +112,10 @@ class SequenceBehavior extends Behavior
      * @param \ArrayObject<string, mixed> $options The options passed to the find method.
      * @return void
      */
-    public function beforeFind(EventInterface $event, Query $query, ArrayObject $options): void
+    public function beforeFind(EventInterface $event, SelectQuery $query, ArrayObject $options): void
     {
         if (!$query->clause('order')) {
-            $query->order([$this->_table->aliasField($this->_config['sequenceField']) => 'ASC']);
+            $query->orderBy([$this->_table->aliasField($this->_config['sequenceField']) => 'ASC']);
         }
     }
 
@@ -512,7 +512,7 @@ class SequenceBehavior extends Behavior
         $last = $this->_table->find()
             ->select([$orderField])
             ->where($scope)
-            ->order([$orderField => 'DESC'])
+            ->orderBy([$orderField => 'DESC'])
             ->limit(1)
             ->enableHydration(false)
             ->first();
@@ -554,7 +554,7 @@ class SequenceBehavior extends Behavior
     {
         $field = $this->_config['sequenceField'];
 
-        return $this->_table->query()->newExpr()
+        return $this->_table->selectQuery()->newExpr()
             ->add(new IdentifierExpression($field))
             ->add('1')
             ->setConjunction($direction);

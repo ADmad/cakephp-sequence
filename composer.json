@@ -5,10 +5,10 @@
     "type": "cakephp-plugin",
     "license": "MIT",
     "require": {
-        "cakephp/orm": "^4.0"
+        "cakephp/orm": "dev-4.next"
     },
     "require-dev": {
-        "cakephp/cakephp": "^4.0",
+        "cakephp/cakephp": "dev-4.next",
         "phpunit/phpunit": "~8.5.0 || ^9.5"
     },
     "autoload": {
@@ -28,5 +28,7 @@
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true
         }
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

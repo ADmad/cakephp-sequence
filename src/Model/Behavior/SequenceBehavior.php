@@ -448,7 +448,7 @@ class SequenceBehavior extends Behavior
              * @phpstan-ignore-next-line
              */
             $primaryKey = $entity->get($this->_table->getPrimaryKey());
-            $entity = $this->_table->get($primaryKey, ['fields' => $fields]);
+            $entity = $this->_table->get($primaryKey, fields: $fields);
             $values = $entity->extract($fields);
         }
 

@@ -404,7 +404,7 @@ class SequenceBehaviorTest extends TestCase
 
         $query = $query ?: $table->find();
 
-        $records = $query->find('list', ['keyField' => $order, 'valueField' => 'id'])
+        $records = $query->find('list', keyField: $order, valueField: 'id')
             ->where($conditions)
             ->orderBy([$order => 'ASC'])
             ->toArray();

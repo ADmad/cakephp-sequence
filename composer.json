@@ -9,7 +9,7 @@
     },
     "require-dev": {
         "cakephp/cakephp": "5.x-dev",
-        "phpunit/phpunit": "^9.5.19"
+        "phpunit/phpunit": "^10.1"
     },
     "autoload": {
         "psr-4": {
@@ -24,7 +24,6 @@
         }
     },
     "config": {
-        "process-timeout": 900,
         "sort-packages": true,
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true

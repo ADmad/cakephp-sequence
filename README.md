@@ -1,6 +1,6 @@
 # Sequence plugin to maintain ordered list of records
 
-[![Build Status](https://img.shields.io/github/workflow/status/ADmad/cakephp-sequence/CI/master?style=flat-square)](https://github.com/ADmad/cakephp-sequence/actions/workflows/ci.yml)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/ADmad/cakephp-sequence/ci.yml?branch=master&style=flat-square)](https://github.com/ADmad/cakephp-sequence/actions/workflows/ci.yml)
 [![Coverage](https://img.shields.io/codecov/c/github/ADmad/cakephp-sequence.svg?style=flat-square)](https://codecov.io/github/ADmad/cakephp-sequence)
 [![Total Downloads](https://img.shields.io/packagist/dt/admad/cakephp-sequence.svg?style=flat-square)](https://packagist.org/packages/admad/cakephp-sequence)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE.txt)

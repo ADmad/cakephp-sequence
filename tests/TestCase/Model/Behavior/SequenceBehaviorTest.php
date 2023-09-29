@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace ADmad\Sequence\Test\TestCase\Model\Behavior;
 
 use Cake\ORM\Entity;
-use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\TestSuite\TestCase;
 use TestApp\Model\Table\GroupedItemsTable;
 use TestApp\Model\Table\ItemsTable;
@@ -13,9 +12,7 @@ use TestApp\Model\Table\UniqueItemsTable;
 
 class SequenceBehaviorTest extends TestCase
 {
-    use LocatorAwareTrait;
-
-    public $fixtures = [
+    protected array $fixtures = [
         'plugin.ADmad/Sequence.Items',
         'plugin.ADmad/Sequence.GroupedItems',
         'plugin.ADmad/Sequence.KeywordItems',
@@ -407,9 +404,9 @@ class SequenceBehaviorTest extends TestCase
 
         $query = $query ?: $table->find();
 
-        $records = $query->find('list', ['keyField' => $order, 'valueField' => 'id'])
+        $records = $query->find('list', keyField: $order, valueField: 'id')
             ->where($conditions)
-            ->order([$order => 'ASC'])
+            ->orderBy([$order => 'ASC'])
             ->toArray();
 
         return $this->assertSame($expected, $records);

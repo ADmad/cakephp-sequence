@@ -5,11 +5,11 @@
     "type": "cakephp-plugin",
     "license": "MIT",
     "require": {
-        "cakephp/orm": "^4.0"
+        "cakephp/orm": "^5.0"
     },
     "require-dev": {
-        "cakephp/cakephp": "^4.0",
-        "phpunit/phpunit": "~8.5.0 || ^9.5"
+        "cakephp/cakephp": "^5.0",
+        "phpunit/phpunit": "^10.1"
     },
     "autoload": {
         "psr-4": {

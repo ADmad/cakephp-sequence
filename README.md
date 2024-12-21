@@ -22,7 +22,7 @@ Then load the plugin by running CLI command:
 ## How it works
 
 `SequenceBehavior` provided by this plugin maintains a contiguous sequence of
-integers in a selected column, for records in a table records (optionally with grouping)
+integers in a selected column, for records in a table (optionally with grouping)
 when adding, editing (including moving groups) or deleting records.
 
 ## Usage
@@ -43,7 +43,7 @@ $this->addBehavior('ADmad/Sequence.Sequence', [
 ]);
 ```
 
-Now whenever to add a new record its `position` field will be automatically
+Now whenever a new record is added its `position` field will be automatically
 set to current largest value in sequence plus one.
 
 When editing records you can set the position to a new value and the position of
@@ -51,7 +51,7 @@ other records in the list will be automatically updated to maintain proper
 sequence.
 
 When doing a find on the table an order clause is automatically added to the
-query to order by the position field if a order clause has not already been set.
+query to order by the position field if an order clause has not already been set.
 
 ### Methods
 

@@ -4,6 +4,8 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="https://getpsalm.org/schema/config"
     xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+    findUnusedBaselineEntry="true"
+    findUnusedCode="false"
 >
     <projectFiles>
         <directory name="src" />
@@ -14,5 +16,6 @@
 
     <issueHandlers>
         <MissingClosureParamType errorLevel="info" />
+        <RiskyTruthyFalsyComparison errorLevel="info" />
     </issueHandlers>
 </psalm>

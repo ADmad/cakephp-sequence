@@ -554,7 +554,7 @@ class SequenceBehavior extends Behavior
     {
         $field = $this->_config['sequenceField'];
 
-        return $this->_table->selectQuery()->newExpr()
+        return $this->_table->selectQuery()->expr()
             ->add(new IdentifierExpression($field))
             ->add('1')
             ->setConjunction($direction);

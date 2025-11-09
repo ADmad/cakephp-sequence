@@ -267,7 +267,7 @@ class SequenceBehaviorTest extends TestCase
                 ['id' => 1],
                 ['id' => 5],
             ],
-            ['accessibleFields' => ['id' => true]]
+            ['accessibleFields' => ['id' => true]],
         );
         foreach ($entities as &$entity) {
             $entity->setNew(false);

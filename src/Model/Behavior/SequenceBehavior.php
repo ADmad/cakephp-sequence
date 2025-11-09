@@ -149,7 +149,7 @@ class SequenceBehavior extends Behavior
                 $this->_sync(
                     [$orderField => $this->_getUpdateExpression('+')],
                     [$orderField . ' >=' => $newOrder],
-                    $newScope
+                    $newScope,
                 );
             }
 
@@ -176,7 +176,7 @@ class SequenceBehavior extends Behavior
                 $this->_sync(
                     [$orderField => $this->_getUpdateExpression('-')],
                     [$orderField . ' >' => $oldOrder],
-                    $oldScope
+                    $oldScope,
                 );
 
                 // Order not specified
@@ -184,7 +184,7 @@ class SequenceBehavior extends Behavior
                     // Insert at end of new scope
                     $entity->set(
                         $orderField,
-                        $this->_getHighestOrder($newScope) + 1
+                        $this->_getHighestOrder($newScope) + 1,
                     );
 
                     // Order specified
@@ -193,7 +193,7 @@ class SequenceBehavior extends Behavior
                     $this->_sync(
                         [$orderField => $this->_getUpdateExpression('+')],
                         [$orderField . ' >=' => $newOrder],
-                        $newScope
+                        $newScope,
                     );
                 }
                 // Same scope
@@ -207,7 +207,7 @@ class SequenceBehavior extends Behavior
                             $orderField . ' >=' => $newOrder,
                             $orderField . ' <' => $oldOrder,
                         ],
-                        $newScope
+                        $newScope,
                     );
 
                 // Moving down
@@ -219,7 +219,7 @@ class SequenceBehavior extends Behavior
                             $orderField . ' >' => $oldOrder,
                             $orderField . ' <=' => $newOrder,
                         ],
-                        $newScope
+                        $newScope,
                     );
                 }
             }
@@ -262,7 +262,7 @@ class SequenceBehavior extends Behavior
         $this->_sync(
             [$orderField => $this->_getUpdateExpression('-')],
             [$orderField . ' >' => $order],
-            $scope
+            $scope,
         );
 
         $this->_oldValues = null;
@@ -352,7 +352,7 @@ class SequenceBehavior extends Behavior
                 $entity->set($orderField, $newOrder);
 
                 return $table->save($entity, ['atomic' => false, 'checkRules' => false]);
-            }
+            },
         );
 
         $table->addBehavior('ADmad/Sequence.Sequence', $config);
@@ -406,7 +406,7 @@ class SequenceBehavior extends Behavior
 
                     $r = $table->save(
                         $record,
-                        ['atomic' => false, 'checkRules' => false]
+                        ['atomic' => false, 'checkRules' => false],
                     );
                     if ($r === false) {
                         return false;
@@ -414,7 +414,7 @@ class SequenceBehavior extends Behavior
                 }
 
                 return true;
-            }
+            },
         );
 
         $table->addBehavior('ADmad/Sequence.Sequence', $config);
@@ -554,7 +554,7 @@ class SequenceBehavior extends Behavior
     {
         $field = $this->_config['sequenceField'];
 
-        return $this->_table->selectQuery()->newExpr()
+        return $this->_table->selectQuery()->expr()
             ->add(new IdentifierExpression($field))
             ->add('1')
             ->setConjunction($direction);

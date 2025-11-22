@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<ruleset name="sequence">
+    <rule ref="CakePHP"/>
+
+    <file>src/</file>
+    <file>tests/</file>
+</ruleset>

@@ -5,6 +5,7 @@ namespace ADmad\Sequence\Test\TestCase\Model\Behavior;
 
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
+use TestApp\Model\Entity\Item;
 use TestApp\Model\Table\GroupedItemsTable;
 use TestApp\Model\Table\ItemsTable;
 use TestApp\Model\Table\KeywordItemsTable;
@@ -18,6 +19,38 @@ class SequenceBehaviorTest extends TestCase
         'plugin.ADmad/Sequence.KeywordItems',
         'plugin.ADmad/Sequence.UniqueItems',
     ];
+
+    public function testFindOrdering(): void
+    {
+        $Items = $this->getTableLocator()->get('Items', [
+            'className' => ItemsTable::class,
+        ]);
+        $Items->updateAll(['position' => -1], ['id' => 5]);
+
+        $ids = $Items->find()->all()->extract('id')->toList();
+        $this->assertSame([5, 1, 2, 3, 4], $ids);
+
+        $ids = $Items->find()->orderBy(['id' => 'DESC'])->all()->extract('id')->toList();
+        $this->assertSame([5, 4, 3, 2, 1], $ids);
+    }
+
+    public function testSetOrderWithGuardedSequenceField(): void
+    {
+        $Items = $this->getTableLocator()->get('Items', [
+            'className' => ItemsTable::class,
+        ]);
+        $entity = $Items->get(5);
+        $this->assertInstanceOf(Item::class, $entity);
+        $this->assertFalse($entity->isPatchable('id'));
+        $entity->setPatchable('position', false);
+
+        $result = $Items->getBehavior('Sequence')->setOrder([$entity]);
+
+        $this->assertTrue($result);
+        $this->assertTrue($entity->isPatchable('position'));
+        $this->assertSame(0, $Items->get(5)->position);
+        $this->assertTrue($Items->hasBehavior('Sequence'));
+    }
 
     /**
      * [testSave description].
@@ -241,7 +274,7 @@ class SequenceBehaviorTest extends TestCase
         $Items->getValidator()->requirePresence('name');
 
         // Array of arrays
-        $result = $Items->setOrder([
+        $result = $Items->getBehavior('Sequence')->setOrder([
             ['id' => 4],
             ['id' => 3],
             ['id' => 2],
@@ -252,7 +285,7 @@ class SequenceBehaviorTest extends TestCase
         $this->assertOrder([4, 3, 2, 1, 5], $Items);
 
         // Array of ids
-        $result = $Items->setOrder([5, 4, 2, 1, 3]);
+        $result = $Items->getBehavior('Sequence')->setOrder([5, 4, 2, 1, 3]);
         $this->assertTrue($result);
         $this->assertOrder([5, 4, 2, 1, 3], $Items);
 
@@ -267,12 +300,12 @@ class SequenceBehaviorTest extends TestCase
                 ['id' => 1],
                 ['id' => 5],
             ],
-            ['accessibleFields' => ['id' => true]],
+            ['patchableFields' => ['id' => true]],
         );
         foreach ($entities as &$entity) {
             $entity->setNew(false);
         }
-        $result = $Items->setOrder($entities);
+        $result = $Items->getBehavior('Sequence')->setOrder($entities);
         $this->assertTrue($result);
         $this->assertOrder([4, 3, 2, 1, 5], $Items);
 
@@ -282,7 +315,7 @@ class SequenceBehaviorTest extends TestCase
             'className' => GroupedItemsTable::class,
         ]);
 
-        $result = $GroupedItems->setOrder([
+        $result = $GroupedItems->getBehavior('Sequence')->setOrder([
             ['id' => 4],
             ['id' => 3],
             ['id' => 2],
@@ -307,14 +340,14 @@ class SequenceBehaviorTest extends TestCase
         ]);
 
         $entity = $Items->get(4);
-        $result = $Items->moveUp($entity);
+        $result = $Items->getBehavior('Sequence')->moveUp($entity);
 
         $this->assertTrue($result);
         $this->assertOrder([1, 2, 4, 3, 5], $Items);
 
         // Move up entity already at first position
         $entity = $Items->get(1);
-        $result = $Items->moveUp($entity);
+        $result = $Items->getBehavior('Sequence')->moveUp($entity);
 
         $this->assertTrue($result);
         $this->assertOrder([1, 2, 4, 3, 5], $Items);
@@ -326,14 +359,14 @@ class SequenceBehaviorTest extends TestCase
         ]);
 
         $entity = $GroupedItems->get(4);
-        $result = $GroupedItems->moveUp($entity);
+        $result = $GroupedItems->getBehavior('Sequence')->moveUp($entity);
 
         $this->assertTrue($result);
         $this->assertOrder([1, 2, 4, 3, 5], $GroupedItems, ['group_field' => 1]);
 
         // Move up entity already at first position
         $entity = $GroupedItems->get(1);
-        $result = $GroupedItems->moveUp($entity);
+        $result = $GroupedItems->getBehavior('Sequence')->moveUp($entity);
 
         $this->assertTrue($result);
         $this->assertOrder([1, 2, 4, 3, 5], $GroupedItems, ['group_field' => 1]);
@@ -351,14 +384,14 @@ class SequenceBehaviorTest extends TestCase
         ]);
 
         $entity = $Items->get(2);
-        $result = $Items->moveDown($entity);
+        $result = $Items->getBehavior('Sequence')->moveDown($entity);
 
         $this->assertTrue($result);
         $this->assertOrder([1, 3, 2, 4, 5], $Items);
 
         // Move down entity already at last position
         $entity = $Items->get(5);
-        $result = $Items->moveDown($entity);
+        $result = $Items->getBehavior('Sequence')->moveDown($entity);
 
         $this->assertTrue($result);
         $this->assertOrder([1, 3, 2, 4, 5], $Items);
@@ -370,14 +403,14 @@ class SequenceBehaviorTest extends TestCase
         ]);
 
         $entity = $GroupedItems->get(2);
-        $result = $GroupedItems->moveDown($entity);
+        $result = $GroupedItems->getBehavior('Sequence')->moveDown($entity);
 
         $this->assertTrue($result);
         $this->assertOrder([1, 3, 2, 4, 5], $GroupedItems, ['group_field' => 1]);
 
         // Move down entity already at last position
         $entity = $GroupedItems->get(5);
-        $result = $GroupedItems->moveDown($entity);
+        $result = $GroupedItems->getBehavior('Sequence')->moveDown($entity);
 
         $this->assertTrue($result);
         $this->assertOrder([1, 3, 2, 4, 5], $GroupedItems, ['group_field' => 1]);

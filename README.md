@@ -55,24 +55,34 @@ query to order by the position field if an order clause has not already been set
 
 ### Methods
 
+CakePHP 6 no longer forwards behavior methods through the table. Call the
+behavior directly using `$modelObject->getBehavior('Sequence')`. When migrating
+from CakePHP 5, update calls to `moveUp()`, `moveDown()`, and `setOrder()` as shown
+below. Automatic ordering on find, save, and delete continues to work by adding
+the behavior to the table.
+
 #### moveUp(\Cake\Datasource\EntityInterface $entity)
 Move up record by one position:
 
 ```php
-$modelObject->moveUp($entity);
+$modelObject->getBehavior('Sequence')->moveUp($entity);
 ```
 
 #### moveDown(\Cake\Datasource\EntityInterface $entity)
 Move down record by one position:
 
 ```php
-$modelObject->moveDown($entity);
+$modelObject->getBehavior('Sequence')->moveDown($entity);
 ```
 
-#### setOrder(array $record)
+#### setOrder(array $records)
 Set order for list of records provided. Records can be provided as array of
 entities or array of associative arrays like `[['id' => 1], ['id' => 2]]` or
 array of primary key values like `[1, 2]`.
+
+```php
+$modelObject->getBehavior('Sequence')->setOrder([3, 1, 2]);
+```
 
 ## Acknowledgement
 

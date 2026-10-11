@@ -67,7 +67,7 @@ class SequenceBehavior extends Behavior
      *
      * @var array<string, mixed>
      */
-    protected array $_defaultConfig = [
+    protected array $defaultConfig = [
         'sequenceField' => 'position',
         'scope' => [],
         'startAt' => 1,
@@ -78,7 +78,7 @@ class SequenceBehavior extends Behavior
      *
      * @var array|null
      */
-    protected ?array $_oldValues = null;
+    protected ?array $oldValues = null;
 
     /**
      * Normalize config options.
@@ -95,12 +95,12 @@ class SequenceBehavior extends Behavior
      */
     public function initialize(array $config): void
     {
-        if (!$this->_config['scope']) {
+        if (!$this->config['scope']) {
             return;
         }
 
-        if (is_string($this->_config['scope'])) {
-            $this->_config['scope'] = [$this->_config['scope']];
+        if (is_string($this->config['scope'])) {
+            $this->config['scope'] = [$this->config['scope']];
         }
     }
 
@@ -115,7 +115,7 @@ class SequenceBehavior extends Behavior
     public function beforeFind(EventInterface $event, SelectQuery $query, ArrayObject $options): void
     {
         if (!$query->clause('order')) {
-            $query->orderBy([$this->_table->aliasField($this->_config['sequenceField']) => 'ASC']);
+            $query->orderBy([$this->table->aliasField($this->config['sequenceField']) => 'ASC']);
         }
     }
 
@@ -129,7 +129,7 @@ class SequenceBehavior extends Behavior
      */
     public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
     {
-        $newScope = $this->_getScope($entity);
+        $newScope = $this->getScope($entity);
         if ($newScope === false) {
             return;
         }
@@ -142,12 +142,12 @@ class SequenceBehavior extends Behavior
             // Order not specified
             if ($newOrder === null) {
                 // Insert at end of list
-                $entity->set($orderField, $this->_getHighestOrder($newScope) + 1);
+                $entity->set($orderField, $this->getHighestOrder($newScope) + 1);
                 // Order specified
             } else {
                 // Increment order of records it's inserted before
-                $this->_sync(
-                    [$orderField => $this->_getUpdateExpression('+')],
+                $this->sync(
+                    [$orderField => $this->getUpdateExpression('+')],
                     [$orderField . ' >=' => $newOrder],
                     $newScope,
                 );
@@ -160,7 +160,7 @@ class SequenceBehavior extends Behavior
                 return;
             }
 
-            [$oldOrder, $oldScope] = $this->_getOldValues($entity);
+            [$oldOrder, $oldScope] = $this->getOldValues($entity);
 
             // No action if new and old scope and order same
             if (
@@ -173,8 +173,8 @@ class SequenceBehavior extends Behavior
             // If changing scope
             if ($newScope && $newScope != $oldScope) {
                 // Decrement records in old scope with higher order than moved record old order
-                $this->_sync(
-                    [$orderField => $this->_getUpdateExpression('-')],
+                $this->sync(
+                    [$orderField => $this->getUpdateExpression('-')],
                     [$orderField . ' >' => $oldOrder],
                     $oldScope,
                 );
@@ -184,14 +184,14 @@ class SequenceBehavior extends Behavior
                     // Insert at end of new scope
                     $entity->set(
                         $orderField,
-                        $this->_getHighestOrder($newScope) + 1,
+                        $this->getHighestOrder($newScope) + 1,
                     );
 
                     // Order specified
                 } else {
                     // Increment records in new scope with higher order than moved record new order
-                    $this->_sync(
-                        [$orderField => $this->_getUpdateExpression('+')],
+                    $this->sync(
+                        [$orderField => $this->getUpdateExpression('+')],
                         [$orderField . ' >=' => $newOrder],
                         $newScope,
                     );
@@ -201,8 +201,8 @@ class SequenceBehavior extends Behavior
                 // If moving up
                 if ($newOrder < $oldOrder) {
                     // Increment order of those in between
-                    $this->_sync(
-                        [$orderField => $this->_getUpdateExpression('+')],
+                    $this->sync(
+                        [$orderField => $this->getUpdateExpression('+')],
                         [
                             $orderField . ' >=' => $newOrder,
                             $orderField . ' <' => $oldOrder,
@@ -213,8 +213,8 @@ class SequenceBehavior extends Behavior
                 // Moving down
                 } else {
                     // Decrement order of those in between
-                    $this->_sync(
-                        [$orderField => $this->_getUpdateExpression('-')],
+                    $this->sync(
+                        [$orderField => $this->getUpdateExpression('-')],
                         [
                             $orderField . ' >' => $oldOrder,
                             $orderField . ' <=' => $newOrder,
@@ -239,7 +239,7 @@ class SequenceBehavior extends Behavior
      */
     public function beforeDelete(EventInterface $event, EntityInterface $entity): void
     {
-        $this->_oldValues = $this->_getOldValues($entity);
+        $this->oldValues = $this->getOldValues($entity);
     }
 
     /**
@@ -252,20 +252,20 @@ class SequenceBehavior extends Behavior
      */
     public function afterDelete(EventInterface $event, EntityInterface $entity): void
     {
-        if (!$this->_oldValues) {
+        if (!$this->oldValues) {
             return;
         }
 
-        $orderField = $this->_config['sequenceField'];
-        [$order, $scope] = $this->_oldValues;
+        $orderField = $this->config['sequenceField'];
+        [$order, $scope] = $this->oldValues;
 
-        $this->_sync(
-            [$orderField => $this->_getUpdateExpression('-')],
+        $this->sync(
+            [$orderField => $this->getUpdateExpression('-')],
             [$orderField . ' >' => $order],
             $scope,
         );
 
-        $this->_oldValues = null;
+        $this->oldValues = null;
     }
 
     /**
@@ -278,7 +278,7 @@ class SequenceBehavior extends Behavior
      */
     public function moveUp(EntityInterface $entity): bool
     {
-        return $this->_movePosition($entity, '-');
+        return $this->movePosition($entity, '-');
     }
 
     /**
@@ -291,7 +291,7 @@ class SequenceBehavior extends Behavior
      */
     public function moveDown(EntityInterface $entity): bool
     {
-        return $this->_movePosition($entity, '+');
+        return $this->movePosition($entity, '+');
     }
 
     /**
@@ -304,19 +304,19 @@ class SequenceBehavior extends Behavior
      * @param string $direction Whether to increment or decrement the field.
      * @return bool
      */
-    protected function _movePosition(EntityInterface $entity, string $direction = '+'): bool
+    protected function movePosition(EntityInterface $entity, string $direction = '+'): bool
     {
         if ($entity->isNew()) {
             return false;
         }
 
-        $scope = $this->_getScope($entity);
+        $scope = $this->getScope($entity);
         if ($scope === false) {
             return false;
         }
 
         $config = $this->getConfig();
-        $table = $this->_table;
+        $table = $this->table;
 
         $table->removeBehavior('Sequence');
 
@@ -367,20 +367,20 @@ class SequenceBehavior extends Behavior
      * arrays like `[['id' => 1], ['id' => 2]]` or array of primary key values
      * like `[1, 2]`.
      *
-     * @param array $records Records.
+     * @param array<\Cake\Datasource\EntityInterface|array<string, mixed>|int|string> $records Records.
      * @return bool
      */
     public function setOrder(array $records): bool
     {
         $config = $this->getConfig();
-        $table = $this->_table;
+        $table = $this->table;
 
         $table->removeBehavior('Sequence');
 
         $return = $table->getConnection()->transactional(
             function ($connection) use ($table, $records) {
-                $order = $this->_config['startAt'];
-                $field = $this->_config['sequenceField'];
+                $order = $this->config['startAt'];
+                $field = $this->config['sequenceField'];
 
                 /** @var string $primaryKeyField */
                 $primaryKeyField = $table->getPrimaryKey();
@@ -393,7 +393,7 @@ class SequenceBehavior extends Behavior
                         $record = $table->newEntity($record, [
                             'fields' => array_keys($record),
                             'validate' => false,
-                            'accessibleFields' => [
+                            'patchableFields' => [
                                 $primaryKeyField => true,
                             ],
                         ]);
@@ -401,7 +401,7 @@ class SequenceBehavior extends Behavior
                         $record->setDirty($primaryKeyField, false);
                     }
 
-                    $record->setAccess($field, true);
+                    $record->setPatchable($field, true);
                     $record->set($field, $order++);
 
                     $r = $table->save(
@@ -428,7 +428,7 @@ class SequenceBehavior extends Behavior
      * @param \Cake\Datasource\EntityInterface $entity Entity.
      * @return array
      */
-    protected function _getOldValues(EntityInterface $entity): array
+    protected function getOldValues(EntityInterface $entity): array
     {
         $config = $this->getConfig();
         $fields = array_merge($config['scope'], [$config['sequenceField']]);
@@ -447,8 +447,8 @@ class SequenceBehavior extends Behavior
              * @psalm-suppress PossiblyInvalidArgument
              * @phpstan-ignore-next-line
              */
-            $primaryKey = $entity->get($this->_table->getPrimaryKey());
-            $entity = $this->_table->get($primaryKey, fields: $fields);
+            $primaryKey = $entity->get($this->table->getPrimaryKey());
+            $entity = $this->table->get($primaryKey, fields: $fields);
             $values = $entity->extract($fields);
         }
 
@@ -471,7 +471,7 @@ class SequenceBehavior extends Behavior
      * @param \Cake\Datasource\EntityInterface $entity Entity.
      * @return array|false
      */
-    protected function _getScope(EntityInterface $entity): array|false
+    protected function getScope(EntityInterface $entity): array|false
     {
         $scope = [];
         $config = $this->getConfig();
@@ -504,12 +504,12 @@ class SequenceBehavior extends Behavior
      * @param array $scope Array with scope field => scope values, used for conditions.
      * @return int Value of order field of last record in set
      */
-    protected function _getHighestOrder(array $scope): int
+    protected function getHighestOrder(array $scope): int
     {
-        $orderField = $this->_config['sequenceField'];
+        $orderField = $this->config['sequenceField'];
 
         // Find the last record in the set
-        $last = $this->_table->find()
+        $last = $this->table->find()
             ->select([$orderField])
             ->where($scope)
             ->orderBy([$orderField => 'DESC'])
@@ -523,7 +523,7 @@ class SequenceBehavior extends Behavior
         }
 
         // If there isn't any records in the set, return the start number minus 1
-        return (int)$this->_config['startAt'] - 1;
+        return (int)$this->config['startAt'] - 1;
     }
 
     /**
@@ -535,13 +535,13 @@ class SequenceBehavior extends Behavior
      * @param array $scope Grouping scope that will be added to coditions.
      * @return int Count of rows updated.
      */
-    protected function _sync(array $fields, array $conditions, ?array $scope = null): int
+    protected function sync(array $fields, array $conditions, ?array $scope = null): int
     {
         if ($scope) {
             $conditions = array_merge($conditions, $scope);
         }
 
-        return $this->_table->updateAll($fields, $conditions);
+        return $this->table->updateAll($fields, $conditions);
     }
 
     /**
@@ -550,11 +550,11 @@ class SequenceBehavior extends Behavior
      * @param string $direction Whether to increment or decrement the field.
      * @return \Cake\Database\Expression\QueryExpression QueryExpression to modify the order field
      */
-    protected function _getUpdateExpression(string $direction = '+'): QueryExpression
+    protected function getUpdateExpression(string $direction = '+'): QueryExpression
     {
-        $field = $this->_config['sequenceField'];
+        $field = $this->config['sequenceField'];
 
-        return $this->_table->selectQuery()->expr()
+        return $this->table->selectQuery()->expr()
             ->add(new IdentifierExpression($field))
             ->add('1')
             ->setConjunction($direction);

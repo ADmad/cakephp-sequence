@@ -8,7 +8,7 @@ use TestApp\Model\Entity\Item;
 
 class ItemsTable extends Table
 {
-    protected ?string $_entityClass = Item::class;
+    protected ?string $entityClass = Item::class;
 
     public function initialize(array $config): void
     {
